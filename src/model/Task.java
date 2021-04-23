@@ -46,9 +46,9 @@ public class Task implements Serializable {
 	     //System.out.println(retval);  
 		return retval;
 	}
+	
+	
 	// Getters
-	
-	
 	public String getName() {
 		return taskName;
 	}
@@ -84,5 +84,39 @@ public class Task implements Serializable {
 	
 	
 	// Setters
+	public void setName(String newTaskName) {
+		taskName = newTaskName;
+	}
+	
+	public void setDescription(String newDescription) {
+		description = newDescription;
+	}
+	
+	public void setPriority(int newPriority) {
+		priority = newPriority;	
+	}
+	
+	public void setCategory(String newCategory) {
+		category = newCategory;
+	}
+	
+	
+	public void setCompleted(boolean newCompleted) {
+		completed = newCompleted;
+	}
+	
+	/*
+	 * Cannot change the Date created
+	public void setDateCreated(Date newDateCreated) {
+		dateCreated = newDateCreated;
+	}
+	*/
+	public void setDateDue(Date newDateDue) {
+		dateDue = newDateDue;
+	}
+	
+	public void setLocation(String newLocation) {
+		location = newLocation;
+	}
 	
 }
