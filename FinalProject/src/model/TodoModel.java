@@ -7,6 +7,6 @@ package model;
  * @author mihiryadav
  *
  */
-public class toDoModel {
+public class TodoModel {
 
 }
