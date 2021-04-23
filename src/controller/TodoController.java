@@ -1,7 +1,7 @@
 package controller;
 import java.util.ArrayList;
 import java.util.List;
-import TodoTask.Task;
+import model.Task;
 
 /**
  * 

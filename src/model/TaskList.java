@@ -1,14 +1,16 @@
-package TodoTaskList;
+package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import TodoTask.Task;
-
 public class TaskList implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8513246459933416900L;
 	HashMap<Date, Task> taskList; 	// Date is Priority 
 	
 	

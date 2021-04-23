@@ -1,7 +1,6 @@
 package model;
 import java.util.ArrayList;
 import java.util.List;
-import TodoTask.Task;
 
 /**
  * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
