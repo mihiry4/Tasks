@@ -1,5 +1,6 @@
 package controller;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -21,29 +22,41 @@ public class TodoController {
 		taskList = model.getTaskList();
 	}
 	
+	public TodoController(TodoModel customModel) {
+		model = customModel;
+		taskList = model.getTaskList();
+	}
+	
 	public void getNameSorted() {
-		// TODO
-//		Collections.sort(taskList, new Comparator<User>() {
-//			  @Override
-//			  public int compare(Task t1, Task t2) {
-//			    return t1.getTaskName().compareTo(t2.getTaskName());
-//			  }
-//			});
+		Collections.sort(taskList, new Comparator<Task>() {
+			  public int compare(Task t1, Task t2) {
+				  return t1.getName().compareTo(t2.getName());
+			  }
+		});
 		return;
 	}
 	
 	public void getPrioritySorted() {
 		// TODO
+		Collections.sort(taskList, (p1, p2) -> p1.getPriority() - (p2.getPriority()));
 		return;
 	}
 	
 	public void getCategorySorted() {
-		// TODO
+		Collections.sort(taskList, new Comparator<Task>() {
+			  public int compare(Task t1, Task t2) {
+				  return t1.getCategory().compareTo(t2.getCategory());
+			  }
+		});
 		return;
 	}
 	
-	public void getCompletionSorted() {
-		// TODO
-		return;
+	
+	public void getDateCreatedSorted() {
+		Collections.sort(taskList, new Comparator<Task>() {
+			  public int compare(Task t1, Task t2) {
+				  return t1.getDateCreated().compareTo(t2.getDateCreated());
+			  }
+		});
 	}
 }
