@@ -38,7 +38,7 @@ public class TodoController {
 	
 	public void getPrioritySorted() {
 		// TODO
-		Collections.sort(taskList, (p1, p2) -> p1.getPriority() - (p2.getPriority()));
+		taskList.sort(Comparator.comparingInt(Task::getPriority).thenComparing(Task::getPriority));
 		return;
 	}
 	
