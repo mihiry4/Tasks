@@ -27,6 +27,10 @@ public class TodoController {
 		taskList = model.getTaskList();
 	}
 	
+	public TodoController(List<Task> arr) {
+		taskList = arr;
+	}
+	
 	public void getNameSorted() {
 		Collections.sort(taskList, new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
@@ -50,6 +54,14 @@ public class TodoController {
 		return;
 	}
 	
+	
+	public void getDueDateSorted() {
+		Collections.sort(taskList, new Comparator<Task>() {
+			  public int compare(Task t1, Task t2) {
+				  return t1.getDateDue().compareTo(t2.getDateDue());
+			  }
+		});
+	}
 	
 	public void getDateCreatedSorted() {
 		Collections.sort(taskList, new Comparator<Task>() {
