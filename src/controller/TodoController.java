@@ -31,7 +31,7 @@ public class TodoController {
 		taskList = arr;
 	}
 	
-	public void getNameSorted() {
+	public void sortByName() {
 		Collections.sort(taskList, new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
 				  return t1.getName().compareTo(t2.getName());
@@ -40,12 +40,12 @@ public class TodoController {
 		return;
 	}
 	
-	public void getPrioritySorted() {
+	public void sortByPriority() {
 		taskList.sort(Comparator.comparingInt(Task::getPriority).thenComparing(Task::getPriority));
 		return;
 	}
 	
-	public void getCategorySorted() {
+	public void sortByCategory() {
 		Collections.sort(taskList, new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
 				  return t1.getCategory().compareTo(t2.getCategory());
@@ -55,7 +55,7 @@ public class TodoController {
 	}
 	
 	
-	public void getDueDateSorted() {
+	public void sortByDateDue() {
 		Collections.sort(taskList, new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
 				  return t1.getDateDue().compareTo(t2.getDateDue());
@@ -63,7 +63,7 @@ public class TodoController {
 		});
 	}
 	
-	public void getDateCreatedSorted() {
+	public void sortByDateCreated() {
 		Collections.sort(taskList, new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
 				  return t1.getDateCreated().compareTo(t2.getDateCreated());

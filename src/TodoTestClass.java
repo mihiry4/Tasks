@@ -164,7 +164,7 @@ class TodoTestClass {
 	}
 	
 	@Test
-	void testGetNameSorted() {
+	void testSortByName() {
 		Task testTask1 = new Task("alpha", "This", 0, "Groceries", new Date(), "Neverland");
 		Task testTask2 = new Task("beta", "This", 0, "Groceries", new Date(), "Neverland");
 		Task testTask3 = new Task("delta", "This", 0, "Groceries", new Date(), "Neverland");
@@ -180,12 +180,12 @@ class TodoTestClass {
 		arr2.add(testTask3);
 		arr2.add(testTask4);
 		TodoController controller = new TodoController(arr1);
-		controller.getNameSorted();
+		controller.sortByName();
 		assertTrue(arr1.equals(arr2));
 	}
 	
 	@Test
-	void testGetPrioritySorted() {
+	void testSortByPriority() {
 		Task testTask1 = new Task("alpha", "This", 0, "Groceries", new Date(), "Neverland");
 		Task testTask2 = new Task("beta", "This", 1, "Groceries", new Date(), "Neverland");
 		Task testTask3 = new Task("delta", "This", 2, "Groceries", new Date(), "Neverland");
@@ -201,12 +201,12 @@ class TodoTestClass {
 		arr2.add(testTask3);
 		arr2.add(testTask4);
 		TodoController controller = new TodoController(arr1);
-		controller.getPrioritySorted();
+		controller.sortByPriority();
 		assertTrue(arr1.equals(arr2));
 	}
 	
 	@Test
-	void testGetCategorySorted() {
+	void testSortByCategory() {
 		Task testTask1 = new Task("alpha", "This", 0, "appliances", new Date(), "Neverland");
 		Task testTask2 = new Task("beta", "This", 1, "books", new Date(), "Neverland");
 		Task testTask3 = new Task("delta", "This", 2, "food", new Date(), "Neverland");
@@ -222,12 +222,12 @@ class TodoTestClass {
 		arr2.add(testTask3);
 		arr2.add(testTask4);
 		TodoController controller = new TodoController(arr1);
-		controller.getCategorySorted();
+		controller.sortByCategory();
 		assertTrue(arr1.equals(arr2));
 	}
 	
 	@Test
-	void testGetDueDateSorted() {
+	void testSortByDateDue() {
 		Date d1 = new Date(118,5,4,10,40);
 		Date d2 = new Date(119,5,4,10,40);
 		Date d3 = new Date(120,5,4,10,40);
@@ -247,12 +247,12 @@ class TodoTestClass {
 		arr2.add(testTask3);
 		arr2.add(testTask4);
 		TodoController controller = new TodoController(arr1);
-		controller.getDueDateSorted();
+		controller.sortByDateDue();
 		assertTrue(arr1.equals(arr2));
 	}
 	
 	@Test
-	void testGetDateCreatedSorted() {
+	void testSortByDateCreated() {
 		Date d1 = new Date(118,5,4,10,40);
 		Date d2 = new Date(119,5,4,10,40);
 		Date d3 = new Date(120,5,4,10,40);
@@ -272,7 +272,7 @@ class TodoTestClass {
 		arr2.add(testTask3);
 		arr2.add(testTask4);
 		TodoController controller = new TodoController(arr1);
-		controller.getDateCreatedSorted();
+		controller.sortByDateCreated();
 		assertTrue(arr1.equals(arr2));
 	}
 	
