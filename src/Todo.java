@@ -10,6 +10,6 @@ import model.Task;
 public class Todo {
 	
 	public static void main(String args[]) {
-		Task testTask = new Task(null, null, 0, null, false, null, null);
+		
 	}
 }
