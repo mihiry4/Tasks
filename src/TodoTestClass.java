@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import controller.TodoController;
 import model.Task;
+import model.TaskList;
 
 class TodoTestClass {
 
@@ -274,6 +275,70 @@ class TodoTestClass {
 		TodoController controller = new TodoController(arr1);
 		controller.sortByDateCreated();
 		assertTrue(arr1.equals(arr2));
+	}
+	
+	//Testing all TaskList class methods
+	@Test
+	void testTaskList() {
+		
+		//Creating some dummy tasks
+		Date d1 = new Date(118,5,4,10,40);
+		Date d2 = new Date(119,5,4,10,40);
+		Date d3 = new Date(120,5,4,10,40);
+		Date d4 = new Date(121,5,4,10,40);
+		Date d5 = new Date(122,5,4,10,40);
+		Task testTask1 = new Task("alpha", "This", 0, "Groceries", true, d1, d1, "Neverland");
+		Task testTask2 = new Task("beta",  "This", 0, "Groceries", true, d2, d2, "Neverland");
+		Task testTask3 = new Task("delta",  "This", 0, "Groceries", true, d3, d3, "Neverland");
+		Task testTask4 = new Task("gamma",  "This", 0, "Groceries", true, d4, d4, "Neverland");
+		Task testTask5 = new Task("charlie", "This", 0, "Groceries", true, d5, d5, "Neverland");
+		
+		
+		//Creating TaskList and adding tasks
+		TaskList testTaskList = new TaskList();
+		testTaskList.addTask(testTask1);
+		testTaskList.addTask(testTask2);
+		testTaskList.addTask(testTask3);
+		testTaskList.addTask(testTask4);
+		
+		
+		//Testing method: getTaskList
+		ArrayList<Task> returnedTaskList = testTaskList.getTaskList();
+		
+		ArrayList<Task> shouldEqual = new ArrayList<Task>();
+		shouldEqual.add(testTask1);
+		shouldEqual.add(testTask2);
+		shouldEqual.add(testTask3);
+		shouldEqual.add(testTask4);
+		
+		assertEquals(returnedTaskList, shouldEqual);
+		
+	
+		//Testing method: removeTask
+		testTaskList.removeTask(d1);
+		testTaskList.removeTask(testTask3);
+		shouldEqual.remove(testTask1);
+		shouldEqual.remove(testTask3);
+		assertEquals(returnedTaskList, shouldEqual);
+		assertFalse(testTaskList.removeTask(testTask5));
+		assertEquals(testTaskList.removeTask(d5), null);
+		
+		
+		//Testing method: getTask
+		assertEquals(testTaskList.getTask(d2), testTask2);
+		assertEquals(testTaskList.getTask(d4), testTask4);
+		assertEquals(testTaskList.getTask(d5), null);
+		
+		
+		//Testing method: modifyTask
+		testTaskList.modifyTask(testTask1, "new name", "new description", 3, "new category", false, d5, "new location");
+		assertEquals(testTask1.getName(), "new name");
+		assertEquals(testTask1.getDescription(), "new description");
+		assertEquals(testTask1.getPriority(), 3);
+		assertEquals(testTask1.getCategory(), "new category");
+		assertFalse(testTask1.isCompleted());
+		assertEquals(testTask1.getDateDue(), d5);
+		assertEquals(testTask1.getLocation(), "new location");
 	}
 	
 	
