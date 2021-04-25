@@ -9,7 +9,7 @@ public class TaskList implements Serializable {
 	 * Serial version UID to identify this object for serialization.
 	 */
 	private static final long serialVersionUID = -8513246459933416900L;
-	ArrayList<Task> taskList;
+	private ArrayList<Task> taskList;
 	
 	
 	/**
