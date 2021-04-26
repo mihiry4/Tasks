@@ -29,9 +29,9 @@ public class TodoView extends Application {
 	private static BorderPane window;
 	TodoModel model;
 	TodoController controller;
-	StackPane bottomButton;
+	StackPane bottomPane;
 	private MenuBar menuBar;
-	private Circle addTask;
+	private Circle addTaskButton;
 	private CheckMenuItem showCompleted;
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
@@ -78,8 +78,8 @@ public class TodoView extends Application {
 		
 		// set window layer
 		window.setTop(menuBar);
-		window.setBottom(bottomButton);
-		window.setAlignment(bottomButton, Pos.CENTER);
+		window.setBottom(bottomPane);
+		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
 		Scene scene = new Scene(window, 400, 600);
@@ -148,21 +148,26 @@ public class TodoView extends Application {
 	 * No return.
 	 */
 	private void createAddTask() {
-		bottomButton = new StackPane();
+		bottomPane = new StackPane();
 		
 		// Circle
-		addTask = new Circle();
-		addTask.setRadius(25);
-		addTask.setFill(Color.GREEN);
+		addTaskButton = new Circle();
+		addTaskButton.setRadius(25);
+		addTaskButton.setFill(Color.GREEN);
 		
 		// Plus Sign above Circle
 		Text plusSign = new Text("+");
 		plusSign.setFill(Color.WHITE);
 		plusSign.setFont(new Font(40));
 		
-		bottomButton.getChildren().addAll(addTask, plusSign);
+		bottomPane.getChildren().addAll(addTaskButton, plusSign);
 		
-		bottomButton.setOnMouseClicked((event) -> {
+		addTaskButton.setOnMouseClicked((event) -> {
+			System.out.println("hi");
+			addNewTask();
+		});
+		plusSign.setOnMouseClicked((event) -> {
+			System.out.println("hi");
 			addNewTask();
 		});
 	}
