@@ -134,9 +134,9 @@ public class TodoView extends Application {
 		loadFile.setOnAction((event) -> {
 		});
 		
-		// TODO
+		// TODO: Uncomment after merging - method exists in dev branch
 		showCompleted.setOnAction((event) -> {
-			controller.updateShowCompleted(showCompleted.isSelected());
+			//controller.updateShowCompleted(showCompleted.isSelected());
 		});
 	}
 	
