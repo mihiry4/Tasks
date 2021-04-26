@@ -120,6 +120,6 @@ public class TodoModel extends Observable {
 	 * @param flag
 	 */
 	public void updateShowCompleted(boolean flag) {
-		this.taskList.setShowCompleted(flag);;	
+		this.taskList.setShowCompleted(flag);	
 	}
 }
