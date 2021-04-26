@@ -1,4 +1,5 @@
-import model.Task;
+import javafx.application.Application;
+import view.TodoView;
 
 /**
  * 
@@ -10,6 +11,6 @@ import model.Task;
 public class Todo {
 	
 	public static void main(String args[]) {
-		
+		Application.launch(TodoView.class, args);
 	}
 }
