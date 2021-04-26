@@ -1,4 +1,9 @@
 package model;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +21,7 @@ public class TodoModel extends Observable {
 	private TaskList taskList;
 	
 	public TodoModel() {
+		
 		this.taskList = new TaskList();
 	}
 	
@@ -25,6 +31,17 @@ public class TodoModel extends Observable {
 	
 	public TodoModel(ArrayList<Task> taskList) {
 		this.taskList = new TaskList(taskList);
+	}
+	
+	public TodoModel(File file) {
+		try {
+			FileInputStream fin = new FileInputStream(file);
+			ObjectInputStream ois = new ObjectInputStream(fin);
+			this.taskList = (TaskList) ois.readObject();
+			ois.close();
+		} catch (IOException | ClassNotFoundException e) {
+			this.taskList = new TaskList();
+		} 
 	}
 	
 	/**
@@ -121,5 +138,10 @@ public class TodoModel extends Observable {
 	 */
 	public void updateShowCompleted(boolean flag) {
 		this.taskList.setShowCompleted(flag);	
+	}
+
+	public void saveList(ObjectOutputStream oos) throws IOException {
+		// TODO Auto-generated method stub
+		oos.writeObject(this.taskList);
 	}
 }

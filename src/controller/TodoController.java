@@ -1,4 +1,6 @@
 package controller;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +32,10 @@ public class TodoController {
 	
 	public TodoController(ArrayList<Task> arr) {
 		model = new TodoModel(arr);
+	}
+	
+	public void writeToFile(ObjectOutputStream oos) throws IOException {
+		model.saveList(oos);
 	}
 	
 	public void sortByName() {

@@ -1,11 +1,19 @@
 package view;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Observable;
+import java.util.Observer;
+
 import controller.TodoController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -17,6 +25,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import model.TodoModel;
 
@@ -27,7 +37,7 @@ import model.TodoModel;
  * Class that will hold the View of the ToDo application. 
  *
  */
-public class TodoView extends Application {
+public class TodoView extends Application implements Observer {
 	
 	private static BorderPane window;
 	TodoModel model;
@@ -38,9 +48,10 @@ public class TodoView extends Application {
 	private CheckMenuItem showCompleted;
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
+	private Stage myStage;
 	
 	public void start(Stage stage) {
-		
+		this.myStage = stage;
 		window = new BorderPane();
 		menuBar = new MenuBar();
 		model = new TodoModel();
@@ -127,14 +138,45 @@ public class TodoView extends Application {
 		
 		// TODO
 		newFile.setOnAction((event) -> {
+			
 		});
 		
 		// TODO
 		saveFile.setOnAction((event) -> {
+			FileChooser fileChooser = new FileChooser();
+		    fileChooser.setTitle("Save");
+		    fileChooser.getExtensionFilters().addAll(new ExtensionFilter("All Files", "*.dat"));
+		    //Adding action on the menu item
+	        //Opening a dialog box
+		    File file = fileChooser.showSaveDialog(myStage);
+	        if (file != null) {
+	        	String fileName = file.getName();
+                try {
+					FileOutputStream fout = new FileOutputStream(fileName);
+					ObjectOutputStream oos = new ObjectOutputStream(fout);
+					controller.writeToFile(oos);
+				} catch (IOException e) {
+					// catch block
+					Alert a = new Alert(Alert.AlertType.INFORMATION);
+					a.setTitle("Message");
+					a.setContentText("YIKES!");
+					a.setHeaderText("Unable to Save game");
+					a.showAndWait();
+				}
+	        }
 		});
+		
 		
 		// TODO
 		loadFile.setOnAction((event) -> {
+			FileChooser fileChooser = new FileChooser();
+			fileChooser.setTitle("Open Resource File");
+			fileChooser.getExtensionFilters().addAll(
+					new ExtensionFilter("Text Files", "*.dat"));
+			File selectedFile = fileChooser.showOpenDialog(this.myStage);
+			if (selectedFile != null) {
+				model = new TodoModel(selectedFile);
+			}
 		});
 		
 		// TODO: Uncomment after merging - method exists in dev branch
@@ -193,5 +235,12 @@ public class TodoView extends Application {
 	 */
 	private void addNewTask() {
 		// TODO 
+	}
+
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
 	}
 }
