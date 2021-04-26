@@ -10,7 +10,7 @@ public class TaskList implements Serializable {
 	 */
 	private static final long serialVersionUID = -8513246459933416900L;
 	private ArrayList<Task> taskList;
-	
+	private boolean showCompleted;
 	
 	/**
 	 * Constructor for the class. Creates an empty task list.
@@ -20,6 +20,10 @@ public class TaskList implements Serializable {
 		taskList = new ArrayList<Task>();
 	}
 	
+	public TaskList(ArrayList<Task> list) {
+		
+		taskList = list;
+	}
 	
 	/**
 	 * Returns the list of tasks as an ArrayList.
@@ -113,6 +117,9 @@ public class TaskList implements Serializable {
 		task.setLocation(location);
 	}
 
+	public void setShowCompleted(boolean flag) {
+		this.showCompleted = flag;	
+	}
 	
 //USELESS METHODS
 //	

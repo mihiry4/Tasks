@@ -1,4 +1,5 @@
 package model;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -20,6 +21,10 @@ public class TodoModel extends Observable {
 	
 	public TodoModel(TaskList taskList) {
 		this.taskList = taskList;
+	}
+	
+	public TodoModel(ArrayList<Task> taskList) {
+		this.taskList = new TaskList(taskList);
 	}
 	
 	/**
@@ -108,5 +113,13 @@ public class TodoModel extends Observable {
 	public void manualNotify() {
 		setChanged();
 		notifyObservers(this.taskList);
+	}
+	
+	/**
+	 * Function to set flag for if we want to show completed tasks
+	 * @param flag
+	 */
+	public void updateShowCompleted(boolean flag) {
+		this.taskList.setShowCompleted(flag);;	
 	}
 }
