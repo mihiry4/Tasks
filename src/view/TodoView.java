@@ -1,5 +1,6 @@
 package view;
 
+import controller.TodoController;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -14,6 +15,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import model.TodoModel;
 
 /**
  * 
@@ -25,9 +27,12 @@ import javafx.stage.Stage;
 public class TodoView extends Application {
 	
 	private static BorderPane window;
+	TodoModel model;
+	TodoController controller;
 	StackPane bottomButton;
 	private MenuBar menuBar;
 	private Circle addTask;
+	private CheckMenuItem isCompleted;
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	
@@ -35,6 +40,8 @@ public class TodoView extends Application {
 		
 		window = new BorderPane();
 		menuBar = new MenuBar();
+		model = new TodoModel();
+		controller = new TodoController();
 		
 		// Menu for files and sorting 
 		Menu fileMenu   = new Menu("File ");
@@ -55,7 +62,7 @@ public class TodoView extends Application {
 		dateCreated = new MenuItem("Sort By Date Created");
 		sortBy.getItems().addAll(name, priority, category, dueDate, dateCreated);
 		
-		CheckMenuItem isCompleted = new CheckMenuItem("Is Completed");
+		isCompleted = new CheckMenuItem("Is Completed");
 		sortByMenu.getItems().addAll(sortBy, isCompleted);
 		
 		// Add both Menus to MenuBar
@@ -90,36 +97,45 @@ public class TodoView extends Application {
 	 */
 	private void setEventHandlers() {
 		
+		// TODO
 		name.setOnAction((event) -> {
-			// TODO
+			controller.sortByName();
 		});
 		
+		// TODO
 		priority.setOnAction((event) -> {
-			// TODO
+			controller.sortByPriority();
 		});
 		
+		// TODO
 		category.setOnAction((event) -> {
-			// TODO
+			controller.sortByCategory();
 		});
 		
+		// TODO
 		dueDate.setOnAction((event) -> {
-			// TODO
+			controller.sortByDateDue();
 		});
 		
+		// TODO
 		dateCreated.setOnAction((event) -> {
-			// TODO
+			controller.sortByDateCreated();
 		});
 		
+		// TODO
 		newFile.setOnAction((event) -> {
-			// TODO
 		});
 		
+		// TODO
 		saveFile.setOnAction((event) -> {
-			// TODO
 		});
 		
+		// TODO
 		loadFile.setOnAction((event) -> {
-			// TODO
+		});
+		
+		// TODO
+		isCompleted.setOnAction((event) -> {
 		});
 	}
 	
