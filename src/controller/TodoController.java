@@ -70,4 +70,9 @@ public class TodoController {
 			  }
 		});
 	}
+	
+	public void updateShowCompleted(boolean bool) {
+		
+		model.updateShowCompleted(bool);
+	}
 }
