@@ -2,7 +2,9 @@ package view;
 
 import controller.TodoController;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
@@ -14,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import model.TodoModel;
 
@@ -149,16 +152,19 @@ public class TodoView extends Application {
 	 */
 	private void createAddTask() {
 		bottomPane = new StackPane();
-		
-		// Circle
-		addTaskButton = new Circle();
-		addTaskButton.setRadius(25);
-		addTaskButton.setFill(Color.GREEN);
+		bottomPane.setPadding(new Insets(10));
 		
 		// Plus Sign above Circle
 		Text plusSign = new Text("+");
 		plusSign.setFill(Color.WHITE);
 		plusSign.setFont(new Font(40));
+		plusSign.setBoundsType(TextBoundsType.VISUAL);
+		
+		// Circle
+		double radius = 10 + getWidth(plusSign)/2;
+		addTaskButton = new Circle();
+		addTaskButton.setRadius(radius);
+		addTaskButton.setFill(Color.GREEN);
 		
 		bottomPane.getChildren().addAll(addTaskButton, plusSign);
 		
@@ -170,6 +176,12 @@ public class TodoView extends Application {
 			System.out.println("hi");
 			addNewTask();
 		});
+	}
+	
+	private double getWidth(Text text) {
+		new Scene(new Group(text));
+		text.applyCss();
+		return text.getLayoutBounds().getWidth();
 	}
 	
 	
