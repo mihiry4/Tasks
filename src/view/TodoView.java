@@ -32,7 +32,7 @@ public class TodoView extends Application {
 	StackPane bottomButton;
 	private MenuBar menuBar;
 	private Circle addTask;
-	private CheckMenuItem isCompleted;
+	private CheckMenuItem showCompleted;
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	
@@ -44,26 +44,26 @@ public class TodoView extends Application {
 		controller = new TodoController();
 		
 		// Menu for files and sorting 
-		Menu fileMenu   = new Menu("File ");
-		Menu sortByMenu = new Menu("Sort ");
+		Menu fileMenu   = new Menu("File");
+		Menu sortByMenu = new Menu("View");
 		Menu sortBy     = new Menu("Sort By");
 		
 		// Menu Items for fileMenu: 
-		newFile  = new MenuItem("New File ");
-		saveFile = new MenuItem("Save File");
-		loadFile = new MenuItem("Load File");
+		newFile  = new MenuItem("New File");
+		saveFile = new MenuItem("Save...");
+		loadFile = new MenuItem("Load...");
 		fileMenu.getItems().addAll(newFile, saveFile, loadFile);
 		
 		// Menu Items for sortBy: (Menu inside Menu) 
-		name        = new MenuItem("Sort By Name");
-		priority    = new MenuItem("Sort By Priority");
-		category    = new MenuItem("Sort By Category");
-		dueDate     = new MenuItem("Sort By Due Date");
-		dateCreated = new MenuItem("Sort By Date Created");
+		name        = new MenuItem("Name");
+		priority    = new MenuItem("Priority");
+		category    = new MenuItem("Category");
+		dueDate     = new MenuItem("Due Date");
+		dateCreated = new MenuItem("Date Created");
 		sortBy.getItems().addAll(name, priority, category, dueDate, dateCreated);
 		
-		isCompleted = new CheckMenuItem("Is Completed");
-		sortByMenu.getItems().addAll(sortBy, isCompleted);
+		showCompleted = new CheckMenuItem("Show Completed Tasks");
+		sortByMenu.getItems().addAll(sortBy, showCompleted);
 		
 		// Add both Menus to MenuBar
 		menuBar.getMenus().addAll(fileMenu, sortByMenu);
@@ -135,7 +135,8 @@ public class TodoView extends Application {
 		});
 		
 		// TODO
-		isCompleted.setOnAction((event) -> {
+		showCompleted.setOnAction((event) -> {
+			controller.updateShowCompleted(showCompleted.isSelected());
 		});
 	}
 	
