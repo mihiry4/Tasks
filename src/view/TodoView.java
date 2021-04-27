@@ -44,7 +44,7 @@ public class TodoView extends Application implements Observer {
 	TodoController controller;
 	StackPane bottomPane;
 	private MenuBar menuBar;
-	private Circle addTaskButton;
+	private Circle addTaskButton, transparentCircle;
 	private CheckMenuItem showCompleted;
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
@@ -208,13 +208,15 @@ public class TodoView extends Application implements Observer {
 		addTaskButton.setRadius(radius);
 		addTaskButton.setFill(Color.GREEN);
 		
-		bottomPane.getChildren().addAll(addTaskButton, plusSign);
+		// Transparent Circle
+		transparentCircle = new Circle();
+		transparentCircle.setRadius(radius);
+		transparentCircle.setFill(Color.TRANSPARENT);
 		
-		addTaskButton.setOnMouseClicked((event) -> {
-			System.out.println("hi");
-			addNewTask();
-		});
-		plusSign.setOnMouseClicked((event) -> {
+		// Adding to stack pane
+		bottomPane.getChildren().addAll(addTaskButton, plusSign, transparentCircle);
+		
+		transparentCircle.setOnMouseClicked((event) -> {
 			System.out.println("hi");
 			addNewTask();
 		});
