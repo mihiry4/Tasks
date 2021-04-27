@@ -72,7 +72,6 @@ public class TodoView extends Application implements Observer {
 		centerWindow = new VBox();
 		topColumns   = new HBox();
 		
-		
 		// Menu for files and sorting 
 		Menu fileMenu   = new Menu("File");
 		Menu sortByMenu = new Menu("View");
@@ -109,11 +108,9 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-		
+		// Set Center Window (VBox) Items
 		centerWindow.getChildren().addAll(topColumns, vbox);
 		centerWindow.setSpacing(14.0);
-		//centerWindow.setStyle("-fx-background-color:#D2B48C");
-		
 		
 		// set window layer
 		window.setTop(menuBar);
@@ -128,13 +125,12 @@ public class TodoView extends Application implements Observer {
 		stage.show();
 	}
 	
-	
+	/**
+	 * Function to create the top method headers displayed in
+	 * the view.
+	 * 
+	 */
 	private void createColumnHeaders() {
-		// TODO Create the headers for column
-		// And have a grey-ish text box that says no tasks click + sign to add
-		// HBOX for each row
-		// V box to contains HBoxes
-		// Column headers should not be part of the VBOX which contains tasks
 		Text name = new Text(" Task          || ");
 		Text dueDate = new Text("Due Date || ");
 		Text dateCreated = new Text("Date Created || ");
@@ -149,10 +145,6 @@ public class TodoView extends Application implements Observer {
 		
 		topColumns.getChildren().addAll(name, dateCreated, dueDate, category, priority);
 		topColumns.setStyle("-fx-background-color:#C0C0C0");
-		
-		
-		vbox.setSpacing(10.0);
-		vbox.setMinHeight(480);
 	}
 
 	/**
