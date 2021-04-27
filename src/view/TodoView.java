@@ -370,6 +370,7 @@ public class TodoView extends Application implements Observer {
         	System.out.println(priorityComboBox.getValue());
         	System.out.println(datePicker.getValue()); // returns in format 2021-04-28
         	System.out.println(locationField.getText());
+        	dialog.close();
         });
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
         secondaryDetailsVbox.getChildren().addAll(categoryText, categoryComboBox, 
