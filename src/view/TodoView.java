@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Observable;
@@ -20,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -278,7 +280,7 @@ public class TodoView extends Application implements Observer {
 	 * no return.
 	 */
 	private void addNewTask() {
-		createPopUp("", "", 1, "Work", false, new Date(),"");
+		createPopUp("", "", 1, "", false, new Date(),"");
 	}
 	
 	/**
@@ -295,6 +297,8 @@ public class TodoView extends Application implements Observer {
 	
 	private void createPopUp(String taskName, String description, int priority, String category, boolean completed,
 			Date dateDue, String location) {
+		
+		// setting up a new stage
 		final Stage dialog = new Stage();
 		dialog.setResizable(false);
 		dialog.setTitle("Add Task");
@@ -305,7 +309,9 @@ public class TodoView extends Application implements Observer {
         VBox secondaryDetailsVbox = new VBox(20);
         primaryDetailsVbox.setPadding(new Insets(8, 8, 8, 8));
         
+        //
         // adds name and description fields and completed checkbox
+        //
         TextField nameField = new TextField();
         nameField.setText(taskName);
         TextArea DescriptionField = new TextArea();
@@ -322,21 +328,21 @@ public class TodoView extends Application implements Observer {
         cb.setSelected(completed);
         primaryDetailsVbox.getChildren().addAll(nameField,DescriptionField,cb);
 
-        //adds category, priority, due date, Location and submit button elements
+        //
+        // adds category, priority, due date, Location and submit button elements
+        //
         secondaryDetailsVbox.setPadding(new Insets(8, 8, 8, 8));
         Rectangle backGColor = new Rectangle(270,600);
         backGColor.setFill(javafx.scene.paint.Color.LIGHTGRAY);
         StackPane stackPane = new StackPane();
+        
+        // category
         Text categoryText = new Text("Category");
-        final ComboBox<String> categoryComboBox = new ComboBox<String>();
-        categoryComboBox.getItems().addAll(
-            "Work",
-            "Home",
-            "Personal",
-            "Health",
-            "Lifestyle"
-        );
-        categoryComboBox.setValue("Work");
+        TextField categoryField = new TextField();
+        categoryField.setPromptText("Category");
+        categoryField.setPrefWidth(160);
+        categoryField.setMaxWidth(180);
+        categoryField.setText(category);
         Text priorityText = new Text("Priority");
         final ComboBox<Integer> priorityComboBox = new ComboBox<Integer>();
         priorityComboBox.getItems().addAll(
@@ -347,33 +353,47 @@ public class TodoView extends Application implements Observer {
             5
         );   
         priorityComboBox.setValue(priority);
+        
+        // dates
         Text dueDateText = new Text("Due Date");
         DatePicker datePicker = new DatePicker();
+        // disables past dates
         datePicker.setValue(dateDue.toInstant()
         	      .atZone(ZoneId.systemDefault())
         	      .toLocalDate());
+        datePicker.setDayCellFactory(param -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.compareTo(LocalDate.now()) < 0 );
+            }
+        });
+        
+        // location
         Text locationHeading = new Text("Location");
         TextField locationField = new TextField();
         locationField.setPromptText("Location");
         locationField.setPrefWidth(160);
         locationField.setMaxWidth(180);
         locationField.setText(location);
-        Button submitDetailsButton = new Button("Submit");
         
         
+        Button submitDetailsButton = new Button("Submit");   
         // printing out all the fields on submit button
         submitDetailsButton.setOnAction((event)->{
         	System.out.println(nameField.getText());
         	System.out.println(DescriptionField.getText());
         	System.out.println(cb.isSelected()); // return a boolean
-        	System.out.println(categoryComboBox.getValue());
+        	System.out.println(categoryField.getText());
         	System.out.println(priorityComboBox.getValue());
         	System.out.println(datePicker.getValue()); // returns in format 2021-04-28
         	System.out.println(locationField.getText());
         	dialog.close();
         });
+        
+        // adding to children of Boxes wherever needed
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
-        secondaryDetailsVbox.getChildren().addAll(categoryText, categoryComboBox, 
+        secondaryDetailsVbox.getChildren().addAll(categoryText, categoryField, 
         		priorityText, priorityComboBox, dueDateText, 
         		datePicker,locationHeading, locationField, submitDetailsButton);
         stackPane.getChildren().addAll(backGColor,secondaryDetailsVbox);
