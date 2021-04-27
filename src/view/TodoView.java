@@ -18,8 +18,12 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -50,6 +54,9 @@ public class TodoView extends Application implements Observer {
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
+	private VBox vbox;
+	private VBox centerWindow;
+	private HBox topColumns;
 	
 	private void setup() {
 		model = new TodoModel();
@@ -59,9 +66,11 @@ public class TodoView extends Application implements Observer {
 	
 	public void start(Stage stage) {
 		this.myStage = stage;
-		window = new BorderPane();
-		menuBar = new MenuBar();
-		
+		window       = new BorderPane();
+		menuBar      = new MenuBar();
+		vbox         = new VBox();
+		centerWindow = new VBox();
+		topColumns   = new HBox();
 		
 		
 		// Menu for files and sorting 
@@ -100,9 +109,16 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
+		
+		centerWindow.getChildren().addAll(topColumns, vbox);
+		centerWindow.setSpacing(14.0);
+		//centerWindow.setStyle("-fx-background-color:#D2B48C");
+		
+		
 		// set window layer
 		window.setTop(menuBar);
 		window.setBottom(bottomPane);
+		window.setCenter(centerWindow);
 		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
@@ -119,6 +135,24 @@ public class TodoView extends Application implements Observer {
 		// HBOX for each row
 		// V box to contains HBoxes
 		// Column headers should not be part of the VBOX which contains tasks
+		Text name = new Text(" Task          || ");
+		Text dueDate = new Text("Due Date || ");
+		Text dateCreated = new Text("Date Created || ");
+		Text category    = new Text("Category || ");
+		Text priority    = new Text("Priority");
+		
+		name       .setFont(new Font(15));
+		dueDate    .setFont(new Font(15));
+		dateCreated.setFont(new Font(15));
+		category   .setFont(new Font(15));
+		priority   .setFont(new Font(15));
+		
+		topColumns.getChildren().addAll(name, dateCreated, dueDate, category, priority);
+		topColumns.setStyle("-fx-background-color:#C0C0C0");
+		
+		
+		vbox.setSpacing(10.0);
+		vbox.setMinHeight(480);
 	}
 
 	/**
@@ -243,9 +277,6 @@ public class TodoView extends Application implements Observer {
 			System.out.println("hi");
 			addNewTask();
 		});
-		
-		// TODO: Make a transparent circle on top of the stack pane
-		// and add the event handler to it.
 	}
 	
 	private double getWidth(Text text) {
