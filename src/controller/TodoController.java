@@ -20,17 +20,13 @@ public class TodoController {
 	private TodoModel model;
 	
 	
-	public TodoController() {
-		model = new TodoModel();
-
-	}
 	
 	public TodoController(TodoModel customModel) {
 		model = customModel;
 
 	}
 	
-	public TodoController(ArrayList<Task> arr) {
+	public TodoController(List<Task> arr) {
 		model = new TodoModel(arr);
 	}
 	
@@ -120,4 +116,7 @@ public class TodoController {
 		
 		model.updateShowCompleted(bool);
 	}
+	
+	// TODO: Function to create and modify tasks
+	// Check the string input and convert it to the right object
 }

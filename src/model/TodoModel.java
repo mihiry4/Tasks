@@ -29,7 +29,7 @@ public class TodoModel extends Observable {
 		this.taskList = taskList;
 	}
 	
-	public TodoModel(ArrayList<Task> taskList) {
+	public TodoModel(List<Task> taskList) {
 		this.taskList = new TaskList(taskList);
 	}
 	

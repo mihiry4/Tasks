@@ -2,6 +2,7 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TaskList implements Serializable {
 	
@@ -9,7 +10,7 @@ public class TaskList implements Serializable {
 	 * Serial version UID to identify this object for serialization.
 	 */
 	private static final long serialVersionUID = -8513246459933416900L;
-	private ArrayList<Task> taskList;
+	private List<Task> taskList;
 	private boolean showCompleted;
 	
 	/**
@@ -20,7 +21,7 @@ public class TaskList implements Serializable {
 		taskList = new ArrayList<Task>();
 	}
 	
-	public TaskList(ArrayList<Task> list) {
+	public TaskList(List<Task> list) {
 		
 		taskList = list;
 	}
@@ -29,7 +30,7 @@ public class TaskList implements Serializable {
 	 * Returns the list of tasks as an ArrayList.
 	 * @return the list of tasks as an ArrayList.
 	 */
-	public ArrayList<Task> getTaskList() {
+	public List<Task> getTaskList() {
 
 		return taskList;
 	}

@@ -303,7 +303,7 @@ class TodoTestClass {
 		
 		
 		//Testing method: getTaskList
-		ArrayList<Task> returnedTaskList = testTaskList.getTaskList();
+		ArrayList<Task> returnedTaskList = (ArrayList<Task>) testTaskList.getTaskList();
 		
 		ArrayList<Task> shouldEqual = new ArrayList<Task>();
 		shouldEqual.add(testTask1);
