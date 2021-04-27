@@ -28,6 +28,7 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import model.Task;
 import model.TodoModel;
 
 /**
@@ -50,12 +51,18 @@ public class TodoView extends Application implements Observer {
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
 	
+	private void setup() {
+		model = new TodoModel();
+		controller = new TodoController(model);
+		model.addObserver(this); 
+	}
+	
 	public void start(Stage stage) {
 		this.myStage = stage;
 		window = new BorderPane();
 		menuBar = new MenuBar();
-		model = new TodoModel();
-		controller = new TodoController();
+		
+		
 		
 		// Menu for files and sorting 
 		Menu fileMenu   = new Menu("File");
@@ -88,7 +95,10 @@ public class TodoView extends Application implements Observer {
 			
 		// Function called to create button on bottom of window
 		// to add a task. 
-		createAddTask();
+		createAddTaskButton();
+		
+		// Setup the columns headers and do the initial setup
+		createColumnHeaders();
 		
 		// set window layer
 		window.setTop(menuBar);
@@ -103,6 +113,14 @@ public class TodoView extends Application implements Observer {
 	}
 	
 	
+	private void createColumnHeaders() {
+		// TODO Create the headers for column
+		// And have a grey-ish text box that says no tasks click + sign to add
+		// HBOX for each row
+		// V box to contains HBoxes
+		// Column headers should not be part of the VBOX which contains tasks
+	}
+
 	/**
 	 * Function called from start() to set all of the event handlers 
 	 * for all the different drop down menus. 
@@ -111,37 +129,42 @@ public class TodoView extends Application implements Observer {
 	 */
 	private void setEventHandlers() {
 		
-		// TODO
+		
 		name.setOnAction((event) -> {
 			controller.sortByName();
 		});
 		
-		// TODO
+		
 		priority.setOnAction((event) -> {
 			controller.sortByPriority();
 		});
 		
-		// TODO
+		
 		category.setOnAction((event) -> {
 			controller.sortByCategory();
 		});
 		
-		// TODO
+		
 		dueDate.setOnAction((event) -> {
 			controller.sortByDateDue();
 		});
 		
-		// TODO
+		
 		dateCreated.setOnAction((event) -> {
 			controller.sortByDateCreated();
 		});
 		
-		// TODO
+		
 		newFile.setOnAction((event) -> {
-			
+			setup();
+			// TODO: Add a pass- through method in the controller to replace
+			// this call which is bad style
+			model.manualNotify();
+			// TODO: Maybe in the future, add a pop-up to save the current file
+			// before in the future. Also do that on close.
 		});
 		
-		// TODO
+		
 		saveFile.setOnAction((event) -> {
 			FileChooser fileChooser = new FileChooser();
 		    fileChooser.setTitle("Save");
@@ -167,7 +190,7 @@ public class TodoView extends Application implements Observer {
 		});
 		
 		
-		// TODO
+		
 		loadFile.setOnAction((event) -> {
 			FileChooser fileChooser = new FileChooser();
 			fileChooser.setTitle("Open Resource File");
@@ -179,9 +202,9 @@ public class TodoView extends Application implements Observer {
 			}
 		});
 		
-		// TODO: Uncomment after merging - method exists in dev branch
+		
 		showCompleted.setOnAction((event) -> {
-			//controller.updateShowCompleted(showCompleted.isSelected());
+			controller.updateShowCompleted(showCompleted.isSelected());
 		});
 	}
 	
@@ -192,7 +215,7 @@ public class TodoView extends Application implements Observer {
 	 * 
 	 * No return.
 	 */
-	private void createAddTask() {
+	private void createAddTaskButton() {
 		bottomPane = new StackPane();
 		bottomPane.setPadding(new Insets(10));
 		
@@ -220,6 +243,9 @@ public class TodoView extends Application implements Observer {
 			System.out.println("hi");
 			addNewTask();
 		});
+		
+		// TODO: Make a transparent circle on top of the stack pane
+		// and add the event handler to it.
 	}
 	
 	private double getWidth(Text text) {
@@ -236,12 +262,29 @@ public class TodoView extends Application implements Observer {
 	 * no return.
 	 */
 	private void addNewTask() {
-		// TODO 
+		// Mihir
+		// have a function to make the popup widow
+		// call it here
+		// TODO: Create a new Popup
 	}
-
+	
+	/**
+	 * Function called when addTask Circle is pressed on
+	 * to get users input to create and add a new task. 
+	 * 
+	 * no return.
+	 */
+	private void modifyTask(Task task) {
+		// Mihir
+		// have a function to make the popup widow : same as the one called in addNewTask
+		// add code to prepopulate the popup with the task
+		// TODO: Create a new Popup
+	}
+	
 
 	@Override
 	public void update(Observable o, Object arg) {
+		// 
 		// TODO Auto-generated method stub
 		
 	}
