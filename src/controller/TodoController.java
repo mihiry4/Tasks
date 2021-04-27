@@ -120,19 +120,32 @@ public class TodoController {
 	
 	
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
-			, Date dueDate, String location) {
+			, Date dateDue, String location) {
 		Date currDate = new Date();
-		if(dueDate.compareTo(currDate) < 0) {
+		if(dateDue.compareTo(currDate) < 0) {
 			// TODO: Uncomment after exception is created
 			//throw new TodoDueDateInPastException(dueDate.toString() + " is in the past");
 		}
-		Task newTask = new Task(name, description, priority, category, completed, null, new Date(), location);
+		if(name.equals("")) {
+			// TODO: Uncomment after exception is created
+			//throw new TodoEmptyTaskNameException("Task must have a name");
+		}
+		Task newTask = new Task(name, description, priority, category, completed, dateDue, new Date(), location);
 		model.addTask(newTask);
 		return newTask;
 	}
 	
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) {
+		Date currDate = new Date();
+		if(dateDue.compareTo(currDate) < 0) {
+			// TODO: Uncomment after exception is created
+			//throw new TodoDueDateInPastException(dueDate.toString() + " is in the past");
+		}
+		if(taskName.equals("")) {
+			// TODO: Uncomment after exception is created
+			//throw new TodoEmptyTaskNameException("Task must have a name");
+		}
 		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
 	}
 	
