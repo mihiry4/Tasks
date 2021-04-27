@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import model.Task;
 import model.TodoModel;
@@ -117,6 +118,28 @@ public class TodoController {
 		model.updateShowCompleted(bool);
 	}
 	
-	// TODO: Function to create and modify tasks
-	// Check the string input and convert it to the right object
+	
+	public Task createNewTask(String name, String description, int priority, String category, boolean completed
+			, Date dueDate, String location) {
+		Date currDate = new Date();
+		if(dueDate.compareTo(currDate) < 0) {
+			// TODO: Uncomment after exception is created
+			//throw new TodoDueDateInPastException(dueDate.toString() + " is in the past");
+		}
+		Task newTask = new Task(name, description, priority, category, completed, null, new Date(), location);
+		model.addTask(newTask);
+		return newTask;
+	}
+	
+	public void modifyTask(Task task, String taskName, String description, int priority, String category,
+			boolean completed, Date dateDue, String location) {
+		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
+	}
+	
+	
+	public boolean removeTask(Task task) {
+		
+		return model.removeTask(task);
+	}
+		
 }
