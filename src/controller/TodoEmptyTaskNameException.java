@@ -10,5 +10,10 @@ public class TodoEmptyTaskNameException extends Exception{
 	public TodoEmptyTaskNameException(String message) {
 		super(message);
 	}
+	
+	public String toString() {
+		
+		return "Task must have a name.";
+	}
 
 }

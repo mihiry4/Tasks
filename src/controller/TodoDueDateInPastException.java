@@ -10,5 +10,10 @@ public class TodoDueDateInPastException extends Exception{
 	public TodoDueDateInPastException(String message) {
 		super(message);
 	}
+	
+	public String toString() {
+		
+		return "Due Date cannot be in the past: " + getMessage() + ".";
+	}
 
 }
