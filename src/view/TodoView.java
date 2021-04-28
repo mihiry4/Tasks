@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -19,6 +20,8 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -52,9 +55,9 @@ public class TodoView extends Application implements Observer {
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
-	private VBox vbox;
+	private VBox tasksBox;
 	private VBox centerWindow;
-	private HBox topColumns;
+	private GridPane columnHeaders;
 	
 	private void setup() {
 		model = new TodoModel();
@@ -66,9 +69,9 @@ public class TodoView extends Application implements Observer {
 		this.myStage = stage;
 		window       = new BorderPane();
 		menuBar      = new MenuBar();
-		vbox         = new VBox();
+		tasksBox         = new VBox();
 		centerWindow = new VBox();
-		topColumns   = new HBox();
+		columnHeaders   = new GridPane();
 		
 		// Menu for files and sorting 
 		Menu fileMenu   = new Menu("File");
@@ -107,7 +110,7 @@ public class TodoView extends Application implements Observer {
 		createColumnHeaders();
 		
 		// Set Center Window (VBox) Items
-		centerWindow.getChildren().addAll(topColumns, vbox);
+		centerWindow.getChildren().addAll(columnHeaders, tasksBox);
 		centerWindow.setSpacing(14.0);
 		
 		// set window layer
@@ -129,10 +132,11 @@ public class TodoView extends Application implements Observer {
 	 * 
 	 */
 	private void createColumnHeaders() {
-		Text name = new Text(" Task          || ");
-		Text dueDate = new Text("Due Date || ");
-		Text dateCreated = new Text("Date Created || ");
-		Text category    = new Text("Category || ");
+		
+		Text name = new Text("Task||");
+		Text dueDate = new Text("Due Date||");
+		Text dateCreated = new Text("Date Created||");
+		Text category    = new Text("Category||");
 		Text priority    = new Text("Priority");
 		
 		name       .setFont(new Font(15));
@@ -141,8 +145,20 @@ public class TodoView extends Application implements Observer {
 		category   .setFont(new Font(15));
 		priority   .setFont(new Font(15));
 		
-		topColumns.getChildren().addAll(name, dateCreated, dueDate, category, priority);
-		topColumns.setStyle("-fx-background-color:#C0C0C0");
+		columnHeaders.add(name, 0, 0);
+		columnHeaders.add(dueDate, 1, 0);
+		columnHeaders.add(dateCreated, 2, 0);
+		columnHeaders.add(category, 3, 0);
+		columnHeaders.add(priority, 4, 0);
+		
+		ColumnConstraints columnHeadersConstraints = new ColumnConstraints();
+		columnHeadersConstraints.setPercentWidth(20);
+		for (int i = 0; i < 4; i++) {
+			columnHeaders.getColumnConstraints().add(columnHeadersConstraints);
+		}
+		
+		
+		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
 	}
 
 	/**
