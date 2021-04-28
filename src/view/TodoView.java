@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
-
 import controller.TodoController;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -31,6 +32,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -68,6 +73,10 @@ public class TodoView extends Application implements Observer {
 	private MenuItem newFile, saveFile, loadFile;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
+	private VBox tasksBox;
+	private VBox centerWindow;
+	private GridPane columnHeaders;
+	private Scene scene;
 	
 	private void setup() {
 		model = new TodoModel();
@@ -77,10 +86,11 @@ public class TodoView extends Application implements Observer {
 	
 	public void start(Stage stage) {
 		this.myStage = stage;
-		window = new BorderPane();
-		menuBar = new MenuBar();
-		
-		
+		window       = new BorderPane();
+		menuBar      = new MenuBar();
+		tasksBox         = new VBox();
+		centerWindow = new VBox();
+		columnHeaders   = new GridPane();
 		
 		// Menu for files and sorting 
 		Menu fileMenu   = new Menu("File");
@@ -118,25 +128,68 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
+		// Set Center Window (VBox) Items
+		centerWindow.getChildren().addAll(columnHeaders, tasksBox);
+		centerWindow.setSpacing(14.0);
+		
 		// set window layer
 		window.setTop(menuBar);
 		window.setBottom(bottomPane);
+		window.setCenter(centerWindow);
 		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
-		Scene scene = new Scene(window, 400, 600);
+		scene = new Scene(window, 600, 600);
 		stage.setScene(scene);
 		stage.setTitle("ToDo Application");
 		stage.show();
 	}
 	
-	
+	/**
+	 * Function to create the top method headers displayed in
+	 * the view.
+	 * 
+	 */
 	private void createColumnHeaders() {
-		// TODO Create the headers for column
-		// And have a grey-ish text box that says no tasks click + sign to add
-		// HBOX for each row
-		// V box to contains HBoxes
-		// Column headers should not be part of the VBOX which contains tasks
+		
+		Text completed = new Text(" Completed ");
+		Text name = new Text(" Task ");
+		Text priority = new Text(" Priority ");
+		Text category    = new Text(" Category ");
+		Text date = new Text(" Date ");
+		Text reorder    = new Text(" Reorder ");
+		
+		name       .setFont(new Font(15));
+		priority    .setFont(new Font(15));
+		completed.setFont(new Font(15));
+		category   .setFont(new Font(15));
+		date.setFont(new Font(15));
+		reorder   .setFont(new Font(15));
+		
+		
+		columnHeaders.add(completed, 0, 0);
+		columnHeaders.add(name, 1, 0);
+		columnHeaders.add(priority, 2, 0);
+		columnHeaders.add(category, 3, 0);
+		columnHeaders.add(date,  4, 0);
+		columnHeaders.add(reorder, 5, 0);
+		
+		addColumnConstraints(columnHeaders);
+		
+		columnHeaders.setGridLinesVisible(true);
+		
+		
+		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
+	}
+	
+	private void addColumnConstraints(GridPane gridPane) {
+		final int[] COLUMN_CONSTRAINTS_PERCENTS = new int[] {16, 20, 16, 16, 16, 16};  
+		
+		for (int i = 0; i < 6; i++) {
+			ColumnConstraints tmpColumnConstraint = new ColumnConstraints();
+			tmpColumnConstraint.setPercentWidth(COLUMN_CONSTRAINTS_PERCENTS[i]);
+			columnHeaders.getColumnConstraints().add(tmpColumnConstraint);
+		}
 	}
 
 	/**
@@ -261,9 +314,6 @@ public class TodoView extends Application implements Observer {
 			System.out.println("add task plus button clicked");
 			addNewTask();
 		});
-		
-		// TODO: Make a transparent circle on top of the stack pane
-		// and add the event handler to it.
 	}
 	
 	private double getWidth(Text text) {
