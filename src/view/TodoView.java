@@ -133,11 +133,11 @@ public class TodoView extends Application implements Observer {
 	 */
 	private void createColumnHeaders() {
 		
-		Text name = new Text("Task||");
-		Text dueDate = new Text("Due Date||");
-		Text dateCreated = new Text("Date Created||");
-		Text category    = new Text("Category||");
-		Text priority    = new Text("Priority");
+		Text name = new Text(" Task ");
+		Text dueDate = new Text(" Due Date ");
+		Text dateCreated = new Text(" Date Created ");
+		Text category    = new Text(" Category ");
+		Text priority    = new Text(" Priority ");
 		
 		name       .setFont(new Font(15));
 		dueDate    .setFont(new Font(15));
@@ -153,9 +153,10 @@ public class TodoView extends Application implements Observer {
 		
 		ColumnConstraints columnHeadersConstraints = new ColumnConstraints();
 		columnHeadersConstraints.setPercentWidth(20);
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 5; i++) {
 			columnHeaders.getColumnConstraints().add(columnHeadersConstraints);
 		}
+		columnHeaders.setGridLinesVisible(true);
 		
 		
 		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
