@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import controller.TodoController;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -23,10 +24,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -58,6 +61,7 @@ public class TodoView extends Application implements Observer {
 	private VBox tasksBox;
 	private VBox centerWindow;
 	private GridPane columnHeaders;
+	private Scene scene;
 	
 	private void setup() {
 		model = new TodoModel();
@@ -120,7 +124,7 @@ public class TodoView extends Application implements Observer {
 		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
-		Scene scene = new Scene(window, 400, 600);
+		scene = new Scene(window, 600, 600);
 		stage.setScene(scene);
 		stage.setTitle("ToDo Application");
 		stage.show();
@@ -133,33 +137,44 @@ public class TodoView extends Application implements Observer {
 	 */
 	private void createColumnHeaders() {
 		
+		Text completed = new Text(" Completed ");
 		Text name = new Text(" Task ");
-		Text dueDate = new Text(" Due Date ");
-		Text dateCreated = new Text(" Date Created ");
+		Text priority = new Text(" Priority ");
 		Text category    = new Text(" Category ");
-		Text priority    = new Text(" Priority ");
+		Text date = new Text(" Date ");
+		Text reorder    = new Text(" Reorder ");
 		
 		name       .setFont(new Font(15));
-		dueDate    .setFont(new Font(15));
-		dateCreated.setFont(new Font(15));
+		priority    .setFont(new Font(15));
+		completed.setFont(new Font(15));
 		category   .setFont(new Font(15));
-		priority   .setFont(new Font(15));
+		date.setFont(new Font(15));
+		reorder   .setFont(new Font(15));
 		
-		columnHeaders.add(name, 0, 0);
-		columnHeaders.add(dueDate, 1, 0);
-		columnHeaders.add(dateCreated, 2, 0);
+		
+		columnHeaders.add(completed, 0, 0);
+		columnHeaders.add(name, 1, 0);
+		columnHeaders.add(priority, 2, 0);
 		columnHeaders.add(category, 3, 0);
-		columnHeaders.add(priority, 4, 0);
+		columnHeaders.add(date,  4, 0);
+		columnHeaders.add(reorder, 5, 0);
 		
-		ColumnConstraints columnHeadersConstraints = new ColumnConstraints();
-		columnHeadersConstraints.setPercentWidth(20);
-		for (int i = 0; i < 5; i++) {
-			columnHeaders.getColumnConstraints().add(columnHeadersConstraints);
-		}
+		addColumnConstraints(columnHeaders);
+		
 		columnHeaders.setGridLinesVisible(true);
 		
 		
 		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
+	}
+	
+	private void addColumnConstraints(GridPane gridPane) {
+		final int[] COLUMN_CONSTRAINTS_PERCENTS = new int[] {16, 20, 16, 16, 16, 16};  
+		
+		for (int i = 0; i < 6; i++) {
+			ColumnConstraints tmpColumnConstraint = new ColumnConstraints();
+			tmpColumnConstraint.setPercentWidth(COLUMN_CONSTRAINTS_PERCENTS[i]);
+			columnHeaders.getColumnConstraints().add(tmpColumnConstraint);
+		}
 	}
 
 	/**
