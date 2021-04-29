@@ -214,27 +214,32 @@ public class TodoView extends Application implements Observer {
 	private GridPane addTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
 		
+		// creating checkbox for completion
         CheckBox completedCB = new CheckBox();
 		if(task.isCompleted())
 			completedCB.setSelected(true);
 		completedCB.setPadding(new Insets(2, 2, 2, 2));
 		
+		// getting task name and converting it to task
 		String name = task.getName();
 		Text nameText = new Text(name);
 		
+		// getting priority and converting to text
 		String priority = String.valueOf(task.getPriority());
 		Text priorityText = new Text(priority);
 		
+		// getting category and converting it to text
 		String category = task.getCategory();
 		Text categoryText = new Text(category);
 		
+		// getting date and converting it to text
 		String date = String.valueOf(task.getDateDue().getDate());
 		String month =  String.valueOf(task.getDateDue().getMonth());
 		String year =  String.valueOf(task.getDateDue().getYear() + 1900);
 		String finDate = month + "/" + date  + "/" + year;
 		Text dateText = new Text(finDate);
 
-
+		// new hbox for reorder buttons and up/down buttons
 		HBox hb = new HBox();
 		hb.setPadding(new Insets(5, 5, 5, 5));
 		Button up = new Button("up");
@@ -243,6 +248,7 @@ public class TodoView extends Application implements Observer {
 		down.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
 		hb.getChildren().addAll(up,down);
 		
+		//reorder button actions
 		up.setOnAction((event)->{
 			controller.manualReorder(task, 1);
 		});
@@ -250,12 +256,13 @@ public class TodoView extends Application implements Observer {
 			controller.manualReorder(task, -1);
 		});
 		
-		
+		// changing fonts
 		nameText.setFont(new Font(15));
 		priorityText.setFont(new Font(15));
 		categoryText.setFont(new Font(15));
 		dateText.setFont(new Font(15));
 		
+		// adding all items to task row
 		taskRow.add(completedCB, 0, 0);
 		taskRow.add(nameText, 1, 0);
 		taskRow.add(priorityText, 2, 0);
@@ -263,6 +270,7 @@ public class TodoView extends Application implements Observer {
 		taskRow.add(dateText,  4, 0);
 		taskRow.add(hb, 5, 0);
 		
+		// adding column constraints 
 		addColumnConstraints(taskRow);
 		
 		taskRow.setGridLinesVisible(true);
