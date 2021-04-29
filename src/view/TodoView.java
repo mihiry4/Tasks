@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import controller.TodoController;
 import controller.TodoDueDateInPastException;
 import controller.TodoEmptyTaskNameException;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -55,6 +57,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Task;
+import model.TaskList;
 import model.TodoModel;
 
 /**
@@ -220,6 +223,21 @@ public class TodoView extends Application implements Observer {
 			completedCB.setSelected(true);
 		completedCB.setPadding(new Insets(2, 2, 2, 2));
 		
+		//Setting action to check boxes
+	    completedCB.selectedProperty().addListener(
+	      (ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) -> {
+	         //System.out.println("Value of checkbox changed from " + old_val + " to " +new_val );
+	    	 try {
+				controller.modifyTask(task, task.getName(), task.getDescription(), task.getPriority(),
+						 task.getCategory(), new_val, task.getDateDue(), task.getLocation());
+			} catch (TodoDueDateInPastException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (TodoEmptyTaskNameException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	      });
 		// getting task name and converting it to task
 		String name = task.getName();
 		Text nameText = new Text(name);
@@ -255,10 +273,10 @@ public class TodoView extends Application implements Observer {
 		
 		//reorder button actions
 		up.setOnAction((event)->{
-			controller.manualReorder(task, 1);
+			controller.manualReorder(task, -1);
 		});
 		down.setOnAction((event)->{
-			controller.manualReorder(task, -1);
+			controller.manualReorder(task, 1);
 		});
 		
 		// changing fonts
@@ -543,6 +561,8 @@ public class TodoView extends Application implements Observer {
         	String locationOutput = locationField.getText();
         	ZoneId defaultZoneId = ZoneId.systemDefault();
         	Date dateOutput = Date.from(localDateOutput.atStartOfDay(defaultZoneId).toInstant());
+        	// Put the dueDate time to end of today (23:59:59)
+        	dateOutput.setTime(dateOutput.getTime()+86399999);
         	Task temp = null;
         	if(task == null) { 
 				try {
@@ -566,8 +586,7 @@ public class TodoView extends Application implements Observer {
 				}
 			}
         	dialog.close();
-        	GridPane tempGP = addTaskRow(temp);
-			tasksBox.getChildren().add(tempGP);
+        	
         });
         
         // delete task on clicking delte button
@@ -595,8 +614,15 @@ public class TodoView extends Application implements Observer {
 	public void update(Observable o, Object arg) {
 		
 		System.out.println("updating");
-		// TODO: (write and then) call function to create GridPane for each Task (checking if we are showing completed
-		// tasks) and put them all in VBox tasksBox
-		
+		tasksBox.getChildren().clear();
+		TaskList tList = (TaskList) arg;
+		List<Task> taskList = tList.getTaskList();
+		for(Task t: taskList) {
+			if(t.isCompleted()&& !tList.getShowCompleted())
+				continue;
+			
+			GridPane tempGP = addTaskRow(t);
+			tasksBox.getChildren().add(tempGP);
+		}
 	}
 }
