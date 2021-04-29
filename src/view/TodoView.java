@@ -223,6 +223,11 @@ public class TodoView extends Application implements Observer {
 		// getting task name and converting it to task
 		String name = task.getName();
 		Text nameText = new Text(name);
+		nameText.setOnMouseClicked(e -> {
+			createPopUp(task, task.getName(), task.getDescription(), task.getPriority(), task.getCategory(), task.isCompleted(),
+					task.getDateDue(), task.getLocation());
+        });
+		
 		
 		// getting priority and converting to text
 		String priority = String.valueOf(task.getPriority());
@@ -519,8 +524,13 @@ public class TodoView extends Application implements Observer {
         locationField.setMaxWidth(180);
         locationField.setText(location);
         
+        // hbox for buttons
+        HBox buttonsHbox = new HBox();
+        Button submitDetailsButton = new Button("Submit");  
+        Button deleteTaskButton = new Button("Delete");
+        buttonsHbox.getChildren().addAll(submitDetailsButton,deleteTaskButton);
+        buttonsHbox.setSpacing(5);
         
-        Button submitDetailsButton = new Button("Submit");   
         // printing out all the fields on submit button
         // TODO: tell controller to make new task out of given information
         submitDetailsButton.setOnAction((event)->{
@@ -560,11 +570,19 @@ public class TodoView extends Application implements Observer {
 			tasksBox.getChildren().add(tempGP);
         });
         
+        // delete task on clicking delte button
+        deleteTaskButton.setOnAction((event)->{
+        	controller.removeTask(task);
+        	dialog.close();
+        });
+        
         // adding to children of Boxes wherever needed
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
+        deleteTaskButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
+
         secondaryDetailsVbox.getChildren().addAll(categoryText, categoryField, 
         		priorityText, priorityComboBox, dueDateText, 
-        		datePicker,locationHeading, locationField, submitDetailsButton);
+        		datePicker,locationHeading, locationField, buttonsHbox);
         stackPane.getChildren().addAll(backGColor,secondaryDetailsVbox);
 
         dialogHbox.getChildren().addAll(primaryDetailsVbox,stackPane);
