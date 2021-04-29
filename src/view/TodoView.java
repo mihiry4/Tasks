@@ -138,11 +138,7 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-		for(Task task:model.getTaskList()) {
-			//adds a new task row to main page
-			GridPane temp = addTaskRow(task);
-			tasksBox.getChildren().add(temp);
-		}
+	
 		
 		
 		// Set Center Window (VBox) Items
@@ -510,9 +506,10 @@ public class TodoView extends Application implements Observer {
         	String locationOutput = locationField.getText();
         	ZoneId defaultZoneId = ZoneId.systemDefault();
         	Date dateOutput = Date.from(localDateOutput.atStartOfDay(defaultZoneId).toInstant());
+        	Task temp = null;
         	if(task == null) { 
 				try {
-					controller.createNewTask(nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
+					temp = controller.createNewTask(nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
 				} catch (TodoDueDateInPastException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -532,6 +529,8 @@ public class TodoView extends Application implements Observer {
 				}
 			}
         	dialog.close();
+        	GridPane tempGP = addTaskRow(temp);
+			tasksBox.getChildren().add(tempGP);
         });
         
         // adding to children of Boxes wherever needed
