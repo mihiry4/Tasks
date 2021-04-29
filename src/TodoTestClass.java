@@ -1,3 +1,4 @@
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
@@ -7,8 +8,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import controller.TodoController;
+import controller.TodoDueDateInPastException;
+import controller.TodoEmptyTaskNameException;
 import model.Task;
 import model.TaskList;
+import model.TodoModel;
 
 class TodoTestClass {
 
@@ -382,6 +386,38 @@ class TodoTestClass {
 		assertTrue(arr1.equals(arr2));
 		
 		
+	}
+	
+	/**
+	 * Test methods for {@link TodoDueDateInPastException}
+	 * Test methods for {@link TodoEmptyTaskNameException}
+	 * 
+	 * @throws TodoDueDateInPastException
+	 * @throws TodoEmptyTaskNameException
+	 */
+	@Test
+	void testException() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
+		TodoModel model = new TodoModel(); 
+		TodoController controller = new TodoController(model);
+		Date date = new Date(118,5,4,10,40);
+		
+		TodoDueDateInPastException past = new TodoDueDateInPastException("");
+		TodoEmptyTaskNameException noName = new TodoEmptyTaskNameException("Task must have a name");
+		
+		// TodoEmptyTaskNameException 
+		assertThrows(TodoEmptyTaskNameException.class, 
+				() -> {
+					controller.createNewTask("", "", 0, "", false, new Date(), "");
+				});
+		assertEquals(noName.toString(), "Task must have a name.");
+		
+		
+		// TodoDueDateInPastException 
+		assertThrows(TodoDueDateInPastException.class, 
+				() -> {
+					controller.createNewTask("Task in the Past", "", 0, "", false, date, "");
+				});
+		assertEquals(past.toString(), "Due Date cannot be in the past: .");
 	}
 	
 	
