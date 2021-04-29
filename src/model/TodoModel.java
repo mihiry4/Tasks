@@ -71,6 +71,7 @@ public class TodoModel extends Observable {
 	 */
 	public void addTask(Task task) {
 		this.taskList.addTask(task);
+		this.manualNotify();
 	}
 	
 	/**
@@ -80,8 +81,9 @@ public class TodoModel extends Observable {
 	 * @return true if removed successfully, false otherwise
 	 */
 	public boolean removeTask(Task task) {
-		
-		return taskList.removeTask(task);
+		boolean retTask =  taskList.removeTask(task);
+		this.manualNotify();
+		return retTask;
 		
 	}
 
@@ -93,7 +95,9 @@ public class TodoModel extends Observable {
 	 * @return the Task deleted if list is changed; otherwise, null.
 	 */
 	public Task removeTask(Date dateCreated) {
-		return this.taskList.removeTask(dateCreated);
+		Task retTask = this.taskList.removeTask(dateCreated);
+		this.manualNotify();
+		return retTask;
 	}
 	
 	
@@ -122,6 +126,7 @@ public class TodoModel extends Observable {
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) {
 		this.taskList.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
+		this.manualNotify();
 	}
 	
 	/**
