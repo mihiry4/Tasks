@@ -78,13 +78,21 @@ public class TodoView extends Application implements Observer {
 	private GridPane columnHeaders;
 	private Scene scene;
 	
-	private void setup() {
-		model = new TodoModel();
+	private void setup(File file) {
+		if (file == null) {
+			model = new TodoModel();
+		} else {
+			model = new TodoModel(file);
+		}
+		
 		controller = new TodoController(model);
 		model.addObserver(this); 
 	}
 	
 	public void start(Stage stage) {
+		
+		setup(null);
+		
 		this.myStage = stage;
 		window       = new BorderPane();
 		menuBar      = new MenuBar();
@@ -227,10 +235,8 @@ public class TodoView extends Application implements Observer {
 		
 		
 		newFile.setOnAction((event) -> {
-			setup();
-			// TODO: Add a pass- through method in the controller to replace
-			// this call which is bad style
-			model.manualNotify();
+			setup(null);
+			controller.manualNotify();
 			// TODO: Maybe in the future, add a pop-up to save the current file
 			// before in the future. Also do that on close.
 		});
@@ -269,7 +275,8 @@ public class TodoView extends Application implements Observer {
 					new ExtensionFilter("Text Files", "*.dat"));
 			File selectedFile = fileChooser.showOpenDialog(this.myStage);
 			if (selectedFile != null) {
-				model = new TodoModel(selectedFile);
+				setup(selectedFile);
+				controller.manualNotify();
 			}
 		});
 		
@@ -430,6 +437,7 @@ public class TodoView extends Application implements Observer {
         
         Button submitDetailsButton = new Button("Submit");   
         // printing out all the fields on submit button
+        // TODO: tell controller to make new task out of given information
         submitDetailsButton.setOnAction((event)->{
         	System.out.println(nameField.getText());
         	System.out.println(DescriptionField.getText());
@@ -456,8 +464,10 @@ public class TodoView extends Application implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// 
-		// TODO Auto-generated method stub
+		
+		System.out.println("updating");
+		// TODO: (write and then) call function to create GridPane for each Task (checking if we are showing completed
+		// tasks) and put them all in VBox tasksBox
 		
 	}
 }

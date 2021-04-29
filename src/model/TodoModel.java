@@ -141,7 +141,6 @@ public class TodoModel extends Observable {
 	}
 
 	public void saveList(ObjectOutputStream oos) throws IOException {
-		// TODO Auto-generated method stub
 		oos.writeObject(this.taskList);
 	}
 }

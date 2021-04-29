@@ -120,15 +120,13 @@ public class TodoController {
 	
 	
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
-			, Date dateDue, String location) {
+			, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
 		if(dateDue.compareTo(currDate) < 0) {
-			// TODO: Uncomment after exception is created
-			//throw new TodoDueDateInPastException(dueDate.toString() + " is in the past");
+			throw new TodoDueDateInPastException(dateDue.toString() + " is in the past");
 		}
 		if(name.equals("")) {
-			// TODO: Uncomment after exception is created
-			//throw new TodoEmptyTaskNameException("Task must have a name");
+			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
 		Task newTask = new Task(name, description, priority, category, completed, dateDue, new Date(), location);
 		model.addTask(newTask);
@@ -136,15 +134,13 @@ public class TodoController {
 	}
 	
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
-			boolean completed, Date dateDue, String location) {
+			boolean completed, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
 		if(dateDue.compareTo(currDate) < 0) {
-			// TODO: Uncomment after exception is created
-			//throw new TodoDueDateInPastException(dueDate.toString() + " is in the past");
+			throw new TodoDueDateInPastException(dateDue.toString() + " is in the past");
 		}
 		if(taskName.equals("")) {
-			// TODO: Uncomment after exception is created
-			//throw new TodoEmptyTaskNameException("Task must have a name");
+			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
 		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
 	}
@@ -153,6 +149,11 @@ public class TodoController {
 	public boolean removeTask(Task task) {
 		
 		return model.removeTask(task);
+	}
+	
+	public void manualNotify() {
+		
+		model.manualNotify();
 	}
 		
 }
