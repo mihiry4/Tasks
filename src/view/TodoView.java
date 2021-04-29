@@ -29,6 +29,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
@@ -138,7 +139,9 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-	
+		///scrollbar
+//	    ScrollPane scrollPane = new ScrollPane(tasksBox);
+//	    scrollPane.setFitToHeight(true);
 		
 		
 		// Set Center Window (VBox) Items
@@ -211,8 +214,10 @@ public class TodoView extends Application implements Observer {
 	private GridPane addTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
 		
-		String completed =String.valueOf(task.isCompleted());
-		Text completedText = new Text(completed);
+        CheckBox completedCB = new CheckBox();
+		if(task.isCompleted())
+			completedCB.setSelected(true);
+		completedCB.setPadding(new Insets(2, 2, 2, 2));
 		
 		String name = task.getName();
 		Text nameText = new Text(name);
@@ -223,25 +228,40 @@ public class TodoView extends Application implements Observer {
 		String category = task.getCategory();
 		Text categoryText = new Text(category);
 		
-		String date = task.getDateDue().toGMTString();
-		Text dateText = new Text(completed);
+		String date = String.valueOf(task.getDateDue().getDate());
+		String month =  String.valueOf(task.getDateDue().getMonth());
+		String year =  String.valueOf(task.getDateDue().getYear() + 1900);
+		String finDate = month + "/" + date  + "/" + year;
+		Text dateText = new Text(finDate);
+
+
+		HBox hb = new HBox();
+		hb.setPadding(new Insets(5, 5, 5, 5));
+		Button up = new Button("up");
+		Button down = new Button("down");
+		up.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
+		down.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
+		hb.getChildren().addAll(up,down);
 		
-		String reorder    = "";
-		Text reorderText = new Text(completed);
+		up.setOnAction((event)->{
+			controller.manualReorder(task, 1);
+		});
+		down.setOnAction((event)->{
+			controller.manualReorder(task, -1);
+		});
 		
-		nameText       .setFont(new Font(15));
-		priorityText    .setFont(new Font(15));
-		completedText.setFont(new Font(15));
-		categoryText   .setFont(new Font(15));
+		
+		nameText.setFont(new Font(15));
+		priorityText.setFont(new Font(15));
+		categoryText.setFont(new Font(15));
 		dateText.setFont(new Font(15));
-		reorderText.setFont(new Font(15));
 		
-		taskRow.add(completedText, 0, 0);
+		taskRow.add(completedCB, 0, 0);
 		taskRow.add(nameText, 1, 0);
 		taskRow.add(priorityText, 2, 0);
 		taskRow.add(categoryText, 3, 0);
 		taskRow.add(dateText,  4, 0);
-		taskRow.add(reorderText, 5, 0);
+		taskRow.add(hb, 5, 0);
 		
 		addColumnConstraints(taskRow);
 		
@@ -372,7 +392,6 @@ public class TodoView extends Application implements Observer {
 		bottomPane.getChildren().addAll(addTaskButton, plusSign, transparentCircle);
 		
 		transparentCircle.setOnMouseClicked((event) -> {
-			System.out.println("add task plus button clicked");
 			addNewTask();
 		});
 	}
