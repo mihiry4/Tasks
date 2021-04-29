@@ -201,7 +201,7 @@ public class TodoView extends Application implements Observer {
 		for (int i = 0; i < 6; i++) {
 			ColumnConstraints tmpColumnConstraint = new ColumnConstraints();
 			tmpColumnConstraint.setPercentWidth(COLUMN_CONSTRAINTS_PERCENTS[i]);
-			columnHeaders.getColumnConstraints().add(tmpColumnConstraint);
+			gridPane.getColumnConstraints().add(tmpColumnConstraint);
 		}
 	}
 
