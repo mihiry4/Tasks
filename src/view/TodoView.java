@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 import controller.TodoController;
+import controller.TodoDueDateInPastException;
+import controller.TodoEmptyTaskNameException;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -27,6 +29,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
@@ -136,6 +139,11 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
+		///scrollbar
+//	    ScrollPane scrollPane = new ScrollPane(tasksBox);
+//	    scrollPane.setFitToHeight(true);
+		
+		
 		// Set Center Window (VBox) Items
 		centerWindow.getChildren().addAll(columnHeaders, tasksBox);
 		centerWindow.setSpacing(14.0);
@@ -196,10 +204,84 @@ public class TodoView extends Application implements Observer {
 		for (int i = 0; i < 6; i++) {
 			ColumnConstraints tmpColumnConstraint = new ColumnConstraints();
 			tmpColumnConstraint.setPercentWidth(COLUMN_CONSTRAINTS_PERCENTS[i]);
-			columnHeaders.getColumnConstraints().add(tmpColumnConstraint);
+			gridPane.getColumnConstraints().add(tmpColumnConstraint);
 		}
 	}
 
+	/*
+	 * adds task rows to UI
+	 */
+	private GridPane addTaskRow(Task task) {
+		GridPane taskRow = new GridPane();
+		
+		// creating checkbox for completion
+        CheckBox completedCB = new CheckBox();
+		if(task.isCompleted())
+			completedCB.setSelected(true);
+		completedCB.setPadding(new Insets(2, 2, 2, 2));
+		
+		// getting task name and converting it to task
+		String name = task.getName();
+		Text nameText = new Text(name);
+		
+		// getting priority and converting to text
+		String priority = String.valueOf(task.getPriority());
+		Text priorityText = new Text(priority);
+		
+		// getting category and converting it to text
+		String category = task.getCategory();
+		Text categoryText = new Text(category);
+		
+		// getting date and converting it to text
+		String date = String.valueOf(task.getDateDue().getDate());
+		String month =  String.valueOf(task.getDateDue().getMonth());
+		String year =  String.valueOf(task.getDateDue().getYear() + 1900);
+		String finDate = month + "/" + date  + "/" + year;
+		Text dateText = new Text(finDate);
+
+		// new hbox for reorder buttons and up/down buttons
+		HBox hb = new HBox();
+		hb.setPadding(new Insets(5, 5, 5, 5));
+		Button up = new Button("up");
+		Button down = new Button("down");
+		up.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
+		down.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
+		hb.getChildren().addAll(up,down);
+		
+		//reorder button actions
+		up.setOnAction((event)->{
+			controller.manualReorder(task, 1);
+		});
+		down.setOnAction((event)->{
+			controller.manualReorder(task, -1);
+		});
+		
+		// changing fonts
+		nameText.setFont(new Font(15));
+		priorityText.setFont(new Font(15));
+		categoryText.setFont(new Font(15));
+		dateText.setFont(new Font(15));
+		
+		// adding all items to task row
+		taskRow.add(completedCB, 0, 0);
+		taskRow.add(nameText, 1, 0);
+		taskRow.add(priorityText, 2, 0);
+		taskRow.add(categoryText, 3, 0);
+		taskRow.add(dateText,  4, 0);
+		taskRow.add(hb, 5, 0);
+		
+		// adding column constraints 
+		addColumnConstraints(taskRow);
+		
+		taskRow.setGridLinesVisible(true);
+		return taskRow;
+		
+		
+	}
+	
+	
+	
+	
 	/**
 	 * Function called from start() to set all of the event handlers 
 	 * for all the different drop down menus. 
@@ -318,7 +400,6 @@ public class TodoView extends Application implements Observer {
 		bottomPane.getChildren().addAll(addTaskButton, plusSign, transparentCircle);
 		
 		transparentCircle.setOnMouseClicked((event) -> {
-			System.out.println("add task plus button clicked");
 			addNewTask();
 		});
 	}
@@ -337,7 +418,7 @@ public class TodoView extends Application implements Observer {
 	 * no return.
 	 */
 	private void addNewTask() {
-		createPopUp("", "", 1, "", false, new Date(),"");
+		createPopUp(null, "", "", 1, "", false, new Date(),"");
 	}
 	
 	/**
@@ -347,13 +428,17 @@ public class TodoView extends Application implements Observer {
 	 * no return.
 	 */
 	private void modifyTask(Task task) {
-		createPopUp(task.getName(), task.getDescription(), task.getPriority(), 
+		createPopUp(task, task.getName(), task.getDescription(), task.getPriority(), 
 				task.getCategory(), task.isCompleted(), task.getDateDue(), task.getLocation());
 	}
 	
 	
-	private void createPopUp(String taskName, String description, int priority, String category, boolean completed,
+	private void createPopUp(Task task, String taskName, String description, int priority, String category, boolean completed,
 			Date dateDue, String location) {
+		boolean isNew = false;
+		if(taskName.isEmpty()) {
+			isNew = true;
+		}
 		
 		// setting up a new stage
 		final Stage dialog = new Stage();
@@ -439,14 +524,40 @@ public class TodoView extends Application implements Observer {
         // printing out all the fields on submit button
         // TODO: tell controller to make new task out of given information
         submitDetailsButton.setOnAction((event)->{
-        	System.out.println(nameField.getText());
-        	System.out.println(DescriptionField.getText());
-        	System.out.println(cb.isSelected()); // return a boolean
-        	System.out.println(categoryField.getText());
-        	System.out.println(priorityComboBox.getValue());
-        	System.out.println(datePicker.getValue()); // returns in format 2021-04-28
-        	System.out.println(locationField.getText());
+        	String nameOutput = nameField.getText();
+        	String descriptionOutput = DescriptionField.getText();
+        	boolean isCompletedOutput = cb.isSelected(); // return a boolean
+        	String categoryOutput = categoryField.getText();
+        	int priorityOutput = priorityComboBox.getValue();
+        	LocalDate localDateOutput = datePicker.getValue(); // returns in format 2021-04-28
+        	String locationOutput = locationField.getText();
+        	ZoneId defaultZoneId = ZoneId.systemDefault();
+        	Date dateOutput = Date.from(localDateOutput.atStartOfDay(defaultZoneId).toInstant());
+        	Task temp = null;
+        	if(task == null) { 
+				try {
+					temp = controller.createNewTask(nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
+				} catch (TodoDueDateInPastException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TodoEmptyTaskNameException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	} else {
+				try {
+					controller.modifyTask(task, nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
+				} catch (TodoDueDateInPastException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (TodoEmptyTaskNameException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
         	dialog.close();
+        	GridPane tempGP = addTaskRow(temp);
+			tasksBox.getChildren().add(tempGP);
         });
         
         // adding to children of Boxes wherever needed
