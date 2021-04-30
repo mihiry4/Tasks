@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Observable;
@@ -215,7 +216,7 @@ public class TodoView extends Application implements Observer {
 	/*
 	 * adds task rows to UI
 	 */
-	private GridPane addTaskRow(Task task) {
+	private GridPane makeTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
 		
 		// creating checkbox for completion
@@ -256,7 +257,7 @@ public class TodoView extends Application implements Observer {
 		
 		// getting date and converting it to text
 		String date = String.valueOf(task.getDateDue().getDate());
-		String month =  String.valueOf(task.getDateDue().getMonth());
+		String month =  String.valueOf(task.getDateDue().getMonth()+1);
 		String year =  String.valueOf(task.getDateDue().getYear() + 1900);
 		String finDate = month + "/" + date  + "/" + year;
 		Text dateText = new Text(finDate);
@@ -362,10 +363,11 @@ public class TodoView extends Application implements Observer {
 		    //Adding action on the menu item
 	        //Opening a dialog box
 		    File file = fileChooser.showSaveDialog(myStage);
+
 	        if (file != null) {
-	        	String fileName = file.getName();
+	        	String filePath = file.getPath();
                 try {
-					FileOutputStream fout = new FileOutputStream(fileName);
+					FileOutputStream fout = new FileOutputStream(filePath);
 					ObjectOutputStream oos = new ObjectOutputStream(fout);
 					controller.writeToFile(oos);
 				} catch (IOException e) {
@@ -542,6 +544,17 @@ public class TodoView extends Application implements Observer {
             }
         });
         
+        // interprets and updates datePicker value if user types date instead of picking from calendar
+        datePicker.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused)->{
+            if (!isFocused) {
+               try {
+                   datePicker.setValue(datePicker.getConverter().fromString(datePicker.getEditor().getText()));
+               } catch (DateTimeParseException e) {
+                      datePicker.getEditor().setText(datePicker.getConverter().toString(datePicker.getValue()));
+               }
+            }
+      });
+        
         // location
         Text locationHeading = new Text("Location");
         TextField locationField = new TextField();
@@ -625,7 +638,7 @@ public class TodoView extends Application implements Observer {
 			if(t.isCompleted()&& !tList.getShowCompleted())
 				continue;
 			
-			GridPane tempGP = addTaskRow(t);
+			GridPane tempGP = makeTaskRow(t);
 			tasksBox.getChildren().add(tempGP);
 		}
 	}
