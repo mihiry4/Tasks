@@ -362,10 +362,11 @@ public class TodoView extends Application implements Observer {
 		    //Adding action on the menu item
 	        //Opening a dialog box
 		    File file = fileChooser.showSaveDialog(myStage);
+
 	        if (file != null) {
-	        	String fileName = file.getName();
+	        	String filePath = file.getPath();
                 try {
-					FileOutputStream fout = new FileOutputStream(fileName);
+					FileOutputStream fout = new FileOutputStream(filePath);
 					ObjectOutputStream oos = new ObjectOutputStream(fout);
 					controller.writeToFile(oos);
 				} catch (IOException e) {
