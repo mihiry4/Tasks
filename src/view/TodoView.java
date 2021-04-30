@@ -142,7 +142,7 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-		//scrollbar
+		// Scrollbar
 	    ScrollPane scrollPane = new ScrollPane(tasksBox);
 	    scrollPane.setFitToHeight(true);
 	    scrollPane.setFitToWidth(true);
@@ -614,7 +614,7 @@ public class TodoView extends Application implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		System.out.println("updating");
+		//System.out.println("updating");
 		tasksBox.getChildren().clear();
 		TaskList tList = (TaskList) arg;
 		List<Task> taskList = tList.getTaskList();
