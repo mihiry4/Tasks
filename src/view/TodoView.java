@@ -142,13 +142,14 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-		///scrollbar
-//	    ScrollPane scrollPane = new ScrollPane(tasksBox);
-//	    scrollPane.setFitToHeight(true);
+		// Scrollbar
+	    ScrollPane scrollPane = new ScrollPane(tasksBox);
+	    scrollPane.setFitToHeight(true);
+	    scrollPane.setFitToWidth(true);
 		
 		
 		// Set Center Window (VBox) Items
-		centerWindow.getChildren().addAll(columnHeaders, tasksBox);
+		centerWindow.getChildren().addAll(columnHeaders, scrollPane);
 		centerWindow.setSpacing(14.0);
 		
 		// set window layer
@@ -231,11 +232,9 @@ public class TodoView extends Application implements Observer {
 				controller.modifyTask(task, task.getName(), task.getDescription(), task.getPriority(),
 						 task.getCategory(), new_val, task.getDateDue(), task.getLocation());
 			} catch (TodoDueDateInPastException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				showAlert(e1.toString());
 			} catch (TodoEmptyTaskNameException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				showAlert(e1.toString());
 			}
 	      });
 		// getting task name and converting it to task
@@ -305,6 +304,15 @@ public class TodoView extends Application implements Observer {
 	
 	
 	
+	private void showAlert(String string) {
+		Alert a = new Alert(Alert.AlertType.INFORMATION);
+		a.setTitle("Error!");
+		a.setContentText(string);
+		a.setHeaderText("Invalid Input");
+		a.showAndWait();
+		
+	}
+
 	/**
 	 * Function called from start() to set all of the event handlers 
 	 * for all the different drop down menus. 
@@ -568,21 +576,17 @@ public class TodoView extends Application implements Observer {
 				try {
 					temp = controller.createNewTask(nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
 				} catch (TodoDueDateInPastException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					showAlert(e.toString());
 				} catch (TodoEmptyTaskNameException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					showAlert(e.toString());
 				}
         	} else {
 				try {
 					controller.modifyTask(task, nameOutput, descriptionOutput, priorityOutput, categoryOutput, isCompletedOutput, dateOutput, locationOutput);
 				} catch (TodoDueDateInPastException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					showAlert(e.toString());
 				} catch (TodoEmptyTaskNameException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					showAlert(e.toString());
 				}
 			}
         	dialog.close();
@@ -613,7 +617,7 @@ public class TodoView extends Application implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		System.out.println("updating");
+		//System.out.println("updating");
 		tasksBox.getChildren().clear();
 		TaskList tList = (TaskList) arg;
 		List<Task> taskList = tList.getTaskList();
