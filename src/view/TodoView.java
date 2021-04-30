@@ -142,13 +142,14 @@ public class TodoView extends Application implements Observer {
 		// Setup the columns headers and do the initial setup
 		createColumnHeaders();
 		
-		///scrollbar
-//	    ScrollPane scrollPane = new ScrollPane(tasksBox);
-//	    scrollPane.setFitToHeight(true);
+		//scrollbar
+	    ScrollPane scrollPane = new ScrollPane(tasksBox);
+	    scrollPane.setFitToHeight(true);
+	    scrollPane.setFitToWidth(true);
 		
 		
 		// Set Center Window (VBox) Items
-		centerWindow.getChildren().addAll(columnHeaders, tasksBox);
+		centerWindow.getChildren().addAll(columnHeaders, scrollPane);
 		centerWindow.setSpacing(14.0);
 		
 		// set window layer
