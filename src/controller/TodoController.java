@@ -119,6 +119,12 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	public void updateShowCategory(String category, boolean flag) {
+		
+		model.updateShowCategory(category, flag);
+		model.manualNotify();
+	}
+	
 	
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
 			, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -129,6 +135,11 @@ public class TodoController {
 		if(name.equals("")) {
 			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
+		
+		if (category.equals("")) {
+			category = "Uncategorized";
+		}
+		
 		Task newTask = new Task(name, description, priority, category, completed, dateDue, new Date(), location);
 		model.addTask(newTask);
 		return newTask;
@@ -143,6 +154,11 @@ public class TodoController {
 		if(taskName.equals("")) {
 			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
+		
+		if (category.equals("")) {
+			category = "Uncategorized";
+		}
+		
 		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
 	}
 	

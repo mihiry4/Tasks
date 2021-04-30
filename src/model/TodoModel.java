@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 /**
@@ -147,5 +148,11 @@ public class TodoModel extends Observable {
 
 	public void saveList(ObjectOutputStream oos) throws IOException {
 		oos.writeObject(this.taskList);
+	}
+
+	public void updateShowCategory(String category, boolean flag) {
+		
+		taskList.updateShowCategory(category, flag);
+		
 	}
 }
