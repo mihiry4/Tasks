@@ -118,6 +118,10 @@ public class TaskList implements Serializable {
 		task.setLocation(location);
 	}
 
+	/**
+	 * returns if showCompleted is true or false
+	 * @return if showCompleted variable is true or false
+	 */
 	public boolean getShowCompleted() {
 		return this.showCompleted;	
 	}

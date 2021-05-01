@@ -17,24 +17,39 @@ import model.TodoModel;
  */
 public class TodoController {
 	
-
+	
 	private TodoModel model;
 	
 	
-	
+	/**
+	 * Constructor that uses a model to create an instance
+	 * @param customModel model associated with the constructor
+	 */
 	public TodoController(TodoModel customModel) {
 		model = customModel;
 
 	}
 	
+	/**
+	 * Constructor that uses a model to create an instance
+	 * @param customModel model associated with the constructor
+	 */
 	public TodoController(List<Task> arr) {
 		model = new TodoModel(arr);
 	}
 	
+	/**
+	 * Used to write the model/board to an object output stream
+	 * @param oos Object output stream to which we write
+	 * @throws IOException
+	 */
 	public void writeToFile(ObjectOutputStream oos) throws IOException {
 		model.saveList(oos);
 	}
 	
+	/**
+	 * Used to sort taskList by name
+	 */
 	public void sortByName() {
 			
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -48,6 +63,9 @@ public class TodoController {
 		return;
 	}
 	
+	/**
+	 * Used to sort taskList by priority
+	 */
 	public void sortByPriority() {
 			
 		model.getTaskList().sort(Comparator.comparingInt(Task::getPriority).thenComparing(Task::getPriority));
@@ -57,6 +75,9 @@ public class TodoController {
 		return;
 	}
 	
+	/**
+	 * Used to sort taskList by category
+	 */
 	public void sortByCategory() {
 		
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -70,7 +91,9 @@ public class TodoController {
 		return;
 	}
 	
-	
+	/**
+	 * Used to sort taskList by due date
+	 */
 	public void sortByDateDue() {	
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
@@ -81,6 +104,9 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * Used to sort taskList by date created
+	 */
 	public void sortByDateCreated() {
 		
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -113,6 +139,10 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * Updates show completed for task completion
+	 * @param bool status of task completion
+	 */
 	public void updateShowCompleted(boolean bool) {
 		
 		model.updateShowCompleted(bool);
@@ -120,6 +150,19 @@ public class TodoController {
 	}
 	
 	
+	/**
+	 * creates a new task 
+	 * @param name the name of a task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDue the due date of a task
+	 * @param location the location of a task
+	 * @return Task newly created task
+	 * @throws TodoDueDateInPastException
+	 * @throws TodoEmptyTaskNameException
+	 */
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
 			, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
@@ -134,6 +177,19 @@ public class TodoController {
 		return newTask;
 	}
 	
+	/**
+	 * modifies an already existing task
+	 * @param task the task needed to be modified
+	 * @param taskName the name of the task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDuen the due date of a task
+	 * @param location the location of a task
+	 * @throws TodoDueDateInPastException
+	 * @throws TodoEmptyTaskNameException
+	 */
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
@@ -146,12 +202,19 @@ public class TodoController {
 		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
 	}
 	
-	
+	/**
+	 * removes an already existing task
+	 * @param task
+	 * @return if task was deleted successfully or not
+	 */
 	public boolean removeTask(Task task) {
 		
 		return model.removeTask(task);
 	}
 	
+	/*
+	 * calls manualNotify in the model to notify
+	 */
 	public void manualNotify() {
 		
 		model.manualNotify();

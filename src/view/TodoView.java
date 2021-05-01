@@ -84,6 +84,10 @@ public class TodoView extends Application implements Observer {
 	private GridPane columnHeaders;
 	private Scene scene;
 	
+	/**
+	 * create a new model by taking a file
+	 * @param file a file to load
+	 */
 	private void setup(File file) {
 		if (file == null) {
 			model = new TodoModel();
@@ -95,6 +99,11 @@ public class TodoView extends Application implements Observer {
 		model.addObserver(this); 
 	}
 	
+	/**
+	 * Start function which sets up the GUI window
+	 * to start toDo.
+	 * @param stage is the stage which is displayed
+	 */
 	public void start(Stage stage) {
 		
 		setup(null);
@@ -202,6 +211,10 @@ public class TodoView extends Application implements Observer {
 		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
 	}
 	
+	/**
+	 * adds columns constraints to a grid pane
+	 * @param gridPane
+	 */
 	private void addColumnConstraints(GridPane gridPane) {
 		final int[] COLUMN_CONSTRAINTS_PERCENTS = new int[] {16, 20, 16, 16, 16, 16};  
 		
@@ -212,8 +225,10 @@ public class TodoView extends Application implements Observer {
 		}
 	}
 
-	/*
-	 * adds task rows to UI
+	/**
+	 * adds task to the GUI
+	 * @param task a task that is to be displayed as a row in GUI
+	 * @return GridPane
 	 */
 	private GridPane addTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
@@ -301,9 +316,10 @@ public class TodoView extends Application implements Observer {
 		
 	}
 	
-	
-	
-	
+	/**
+	 * show any type of alert 
+	 * @param string a string to show in alert
+	 */
 	private void showAlert(String string) {
 		Alert a = new Alert(Alert.AlertType.INFORMATION);
 		a.setTitle("Error!");
@@ -321,32 +337,32 @@ public class TodoView extends Application implements Observer {
 	 */
 	private void setEventHandlers() {
 		
-		
+		// sort list by name
 		name.setOnAction((event) -> {
 			controller.sortByName();
 		});
 		
-		
+		// sort list by priority
 		priority.setOnAction((event) -> {
 			controller.sortByPriority();
 		});
 		
-		
+		// sort list by category
 		category.setOnAction((event) -> {
 			controller.sortByCategory();
 		});
 		
-		
+		// sort list by duedate
 		dueDate.setOnAction((event) -> {
 			controller.sortByDateDue();
 		});
 		
-		
+		// sort list by date created
 		dateCreated.setOnAction((event) -> {
 			controller.sortByDateCreated();
 		});
 		
-		
+		// create a new file
 		newFile.setOnAction((event) -> {
 			setup(null);
 			controller.manualNotify();
@@ -435,6 +451,11 @@ public class TodoView extends Application implements Observer {
 		});
 	}
 	
+	/**
+	 * gets width of a text
+	 * @param text
+	 * @return double width of the text
+	 */
 	private double getWidth(Text text) {
 		new Scene(new Group(text));
 		text.applyCss();
@@ -463,7 +484,17 @@ public class TodoView extends Application implements Observer {
 				task.getCategory(), task.isCompleted(), task.getDateDue(), task.getLocation());
 	}
 	
-	
+	/**
+	 * createPopUp creates a popUp
+	 * @param task a task object
+	 * @param taskName the name of a task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDue the due date of a task
+	 * @param location the location of a task
+	 */
 	private void createPopUp(Task task, String taskName, String description, int priority, String category, boolean completed,
 			Date dateDue, String location) {
 		boolean isNew = false;
@@ -599,7 +630,7 @@ public class TodoView extends Application implements Observer {
         	dialog.close();
         });
         
-        // adding to children of Boxes wherever needed
+        // adding to chiwldren of Boxes wherever needed
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
         deleteTaskButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
 
@@ -614,6 +645,12 @@ public class TodoView extends Application implements Observer {
         dialog.show();
 	}
 
+	/**
+	 * Updates the view based on the list
+	 * in the model.
+	 * @param o Observable toDoModel
+	 * @param arg This is the list
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		
