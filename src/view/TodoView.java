@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
+
 import controller.TodoController;
 import controller.TodoDueDateInPastException;
 import controller.TodoEmptyTaskNameException;
@@ -24,6 +26,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
@@ -163,6 +166,16 @@ public class TodoView extends Application implements Observer {
 		scene = new Scene(window, 600, 600);
 		stage.setScene(scene);
 		stage.setTitle("ToDo Application");
+		
+		stage.setOnCloseRequest(e -> {
+			//System.out.println("Exiting");
+			if(!controller.getSavedAfterChanges()) {
+				boolean continueExit = saveAlert("closing the application");
+				if(!continueExit) {
+					e.consume();
+				}
+			}
+		});
 		stage.show();
 	}
 	
@@ -384,14 +397,20 @@ public class TodoView extends Application implements Observer {
 		
 		
 		loadFile.setOnAction((event) -> {
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Open Resource File");
-			fileChooser.getExtensionFilters().addAll(
-					new ExtensionFilter("Text Files", "*.dat"));
-			File selectedFile = fileChooser.showOpenDialog(this.myStage);
-			if (selectedFile != null) {
-				setup(selectedFile);
-				controller.manualNotify();
+			boolean continueLoad = true;
+			if(!controller.getSavedAfterChanges()) {
+				continueLoad = saveAlert("opening a different list");
+			}
+			if(continueLoad) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open Resource File");
+				fileChooser.getExtensionFilters().addAll(
+						new ExtensionFilter("Text Files", "*.dat"));
+				File selectedFile = fileChooser.showOpenDialog(this.myStage);
+				if (selectedFile != null) {
+					setup(selectedFile);
+					controller.manualNotify();
+				}
 			}
 		});
 		
@@ -641,5 +660,19 @@ public class TodoView extends Application implements Observer {
 			GridPane tempGP = makeTaskRow(t);
 			tasksBox.getChildren().add(tempGP);
 		}
+	}
+	
+	
+	public boolean saveAlert(String string) {
+		
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+		a.setHeaderText("You have unsaved changes that will be lost by " + string);
+		a.setContentText(" Do you wish to continue?");
+		a.setTitle("Unsaved Changes");
+		Optional<ButtonType> result = a.showAndWait();
+		if(result.isPresent() && result.get() == ButtonType.OK) {
+		     return true;
+		 }
+		return false;
 	}
 }

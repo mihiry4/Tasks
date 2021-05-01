@@ -19,18 +19,22 @@ import java.util.Observable;
 public class TodoModel extends Observable {
 	
 	private TaskList taskList;
+	private boolean saved;
 	
 	public TodoModel() {
 		
 		this.taskList = new TaskList();
+		saved = true;
 	}
 	
 	public TodoModel(TaskList taskList) {
 		this.taskList = taskList;
+		saved = true;
 	}
 	
 	public TodoModel(List<Task> taskList) {
 		this.taskList = new TaskList(taskList);
+		saved = true;
 	}
 	
 	public TodoModel(File file) {
@@ -40,8 +44,9 @@ public class TodoModel extends Observable {
 			this.taskList = (TaskList) ois.readObject();
 			ois.close();
 		} catch (IOException | ClassNotFoundException e) {
-			this.taskList = new TaskList();
+			this.taskList = new TaskList();			
 		} 
+		saved = true;
 	}
 	
 	/**
@@ -71,6 +76,7 @@ public class TodoModel extends Observable {
 	 */
 	public void addTask(Task task) {
 		this.taskList.addTask(task);
+		saved = false;
 		this.manualNotify();
 	}
 	
@@ -83,6 +89,7 @@ public class TodoModel extends Observable {
 	public boolean removeTask(Task task) {
 		boolean retTask =  taskList.removeTask(task);
 		this.manualNotify();
+		saved = false;
 		return retTask;
 		
 	}
@@ -97,6 +104,7 @@ public class TodoModel extends Observable {
 	public Task removeTask(Date dateCreated) {
 		Task retTask = this.taskList.removeTask(dateCreated);
 		this.manualNotify();
+		saved = false;
 		return retTask;
 	}
 	
@@ -126,6 +134,8 @@ public class TodoModel extends Observable {
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) {
 		this.taskList.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
+		
+		saved = false;
 		this.manualNotify();
 	}
 	
@@ -147,5 +157,10 @@ public class TodoModel extends Observable {
 
 	public void saveList(ObjectOutputStream oos) throws IOException {
 		oos.writeObject(this.taskList);
+		saved = true;
+	}
+	
+	public boolean getSaved() {
+		return saved;
 	}
 }
