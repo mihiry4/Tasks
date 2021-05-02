@@ -172,5 +172,8 @@ public class TodoController {
 		
 		model.manualNotify();
 	}
-		
+	
+	public boolean getSavedAfterChanges() {
+		return model.getSaved();
+	}
 }
