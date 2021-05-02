@@ -22,22 +22,38 @@ public class TodoModel extends Observable {
 	private TaskList taskList;
 	private boolean saved;
 	
+	/**
+	 * constructor method for model
+	 * 
+	 */
 	public TodoModel() {
 		
 		this.taskList = new TaskList();
 		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with taskList
+	 * @param taskList that is used to make a model
+	 */
 	public TodoModel(TaskList taskList) {
 		this.taskList = taskList;
 		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with list of task
+	 * @param list of tasks that is used to make a model
+	 */
 	public TodoModel(List<Task> taskList) {
 		this.taskList = new TaskList(taskList);
 		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with file
+	 * @param file that is used to make a model
+	 */
 	public TodoModel(File file) {
 		try {
 			FileInputStream fin = new FileInputStream(file);
@@ -52,7 +68,6 @@ public class TodoModel extends Observable {
 	
 	/**
 	 * Method to get a list of all the tasks that a user has. 
-	 * 
 	 * @return List<Task> that contains all of the current tasks a user has. 
 	 */
 	public List<Task> getTaskList(){
@@ -156,6 +171,11 @@ public class TodoModel extends Observable {
 		this.taskList.setShowCompleted(flag);	
 	}
 
+	/**
+	 * saves list by writing to object output stream
+	 * @param oos thats been written into
+	 * @throws IOException
+	 */
 	public void saveList(ObjectOutputStream oos) throws IOException {
 		oos.writeObject(this.taskList);
 		saved = true;
