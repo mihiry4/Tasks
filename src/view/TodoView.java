@@ -10,6 +10,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 import controller.TodoController;
@@ -75,15 +77,17 @@ public class TodoView extends Application implements Observer {
 	TodoController controller;
 	StackPane bottomPane;
 	private MenuBar menuBar;
+	private Menu filter;
 	private Circle addTaskButton, transparentCircle;
 	private CheckMenuItem showCompleted;
-	private MenuItem newFile, saveFile, loadFile;
+	private MenuItem newFile, saveFile, loadFile, showAll, hideAll;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
 	private VBox tasksBox;
 	private VBox centerWindow;
 	private GridPane columnHeaders;
 	private Scene scene;
+	private List<CheckMenuItem> categoryCheckBoxes;
 	
 	private void setup(File file) {
 		if (file == null) {
@@ -107,10 +111,11 @@ public class TodoView extends Application implements Observer {
 		centerWindow = new VBox();
 		columnHeaders   = new GridPane();
 		
-		// Menu for files and sorting 
+		// Menu for files and sorting and filtering
 		Menu fileMenu   = new Menu("File");
-		Menu sortByMenu = new Menu("View");
+		Menu viewMenu = new Menu("View");
 		Menu sortBy     = new Menu("Sort By");
+		filter = new Menu("Filter by Category");
 		
 		// Menu Items for fileMenu: 
 		newFile  = new MenuItem("New File");
@@ -126,11 +131,15 @@ public class TodoView extends Application implements Observer {
 		dateCreated = new MenuItem("Date Created");
 		sortBy.getItems().addAll(name, priority, category, dueDate, dateCreated);
 		
+		// Menu Item for Filter: (menu inside menu)
+		showAll = new MenuItem("Show All");
+		hideAll = new MenuItem("Hide All");
+		
 		showCompleted = new CheckMenuItem("Show Completed Tasks");
-		sortByMenu.getItems().addAll(sortBy, showCompleted);
+		viewMenu.getItems().addAll(sortBy, filter, showCompleted);
 		
 		// Add both Menus to MenuBar
-		menuBar.getMenus().addAll(fileMenu, sortByMenu);
+		menuBar.getMenus().addAll(fileMenu, viewMenu);
 		
 		// Method called to set all event handlers for all
 		// different drop down menus. 
@@ -399,6 +408,28 @@ public class TodoView extends Application implements Observer {
 		showCompleted.setOnAction((event) -> {
 			controller.updateShowCompleted(showCompleted.isSelected());
 		});
+		
+		showAll.setOnAction((event) -> {
+			for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
+				
+				if (!categoryCheckBox.isSelected()) {
+					categoryCheckBox.setSelected(true);
+					updateShowCategory(categoryCheckBox);
+				}
+			}
+			
+		});
+		
+		hideAll.setOnAction((event) -> {
+			for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
+				
+				if (categoryCheckBox.isSelected()) {
+					categoryCheckBox.setSelected(false);
+					updateShowCategory(categoryCheckBox);
+				}
+			}
+			
+		});
 	}
 	
 	
@@ -626,20 +657,53 @@ public class TodoView extends Application implements Observer {
         dialog.setScene(dialogScene);
         dialog.show();
 	}
+	
+	private void updateShowCategory(CheckMenuItem tmpCheckMenuItem) {
+		controller.updateShowCategory(tmpCheckMenuItem.getText(), tmpCheckMenuItem.isSelected());
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		//System.out.println("updating");
 		tasksBox.getChildren().clear();
 		TaskList tList = (TaskList) arg;
 		List<Task> taskList = tList.getTaskList();
+		Map<String, Boolean> categories = tList.getCategories();
 		for(Task t: taskList) {
-			if(t.isCompleted()&& !tList.getShowCompleted())
+			if(t.isCompleted() && !tList.getShowCompleted()) {
 				continue;
+			}
 			
-			GridPane tempGP = makeTaskRow(t);
-			tasksBox.getChildren().add(tempGP);
+			if (categories.get(t.getCategory())) {
+				GridPane tempGP = addTaskRow(t);
+				tasksBox.getChildren().add(tempGP);
+				
+			}
 		}
+		
+		//Setting up category filter
+		categoryCheckBoxes = new ArrayList<CheckMenuItem>();
+		
+		filter.getItems().clear();
+		
+		for (Map.Entry<String, Boolean> entry : categories.entrySet()) {
+			String category = entry.getKey();
+			boolean showing = entry.getValue();
+			
+			CheckMenuItem tmpCheckMenuItem = new CheckMenuItem(category);
+			tmpCheckMenuItem.setSelected(showing);
+			tmpCheckMenuItem.setOnAction((event) -> {
+				updateShowCategory(tmpCheckMenuItem);
+			});
+			categoryCheckBoxes.add(tmpCheckMenuItem);
+			filter.getItems().add(tmpCheckMenuItem);
+			
+			
+			
+		}
+		filter.getItems().add(showAll);
+		filter.getItems().add(hideAll);
+		
+		
 	}
 }

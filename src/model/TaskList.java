@@ -3,6 +3,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TaskList implements Serializable {
 	
@@ -11,6 +13,7 @@ public class TaskList implements Serializable {
 	 */
 	private static final long serialVersionUID = -8513246459933416900L;
 	private List<Task> taskList;
+	private Map<String, Boolean> categories;
 	private boolean showCompleted;
 	
 	/**
@@ -19,11 +22,20 @@ public class TaskList implements Serializable {
 	public TaskList() {
 		
 		taskList = new ArrayList<Task>();
+		categories = new TreeMap<String, Boolean>();
 	}
 	
 	public TaskList(List<Task> list) {
 		
 		taskList = list;
+		
+		categories = new TreeMap<String, Boolean>();
+		for (Task task : list) {
+			String taskCategory = task.getCategory();
+			if (!categories.containsKey(taskCategory)) {
+				categories.put(taskCategory, true);
+			}
+		}
 	}
 	
 	/**
@@ -35,12 +47,23 @@ public class TaskList implements Serializable {
 		return taskList;
 	}
 	
+	public Map<String, Boolean> getCategories() {
+		
+		return categories;
+	}
+	
 	
 	/**
 	 * Adds the given task to the taskList.
 	 * @param task the Task object to be added to the taskList.
 	 */
 	public void addTask(Task task) {
+		
+		String taskCategory = task.getCategory();
+		
+		if (!categories.containsKey(taskCategory)) {
+			categories.put(taskCategory, true);
+		}
 
 		taskList.add(task);
 	}
@@ -112,6 +135,11 @@ public class TaskList implements Serializable {
 		task.setName(taskName);
 		task.setDescription(description);
 		task.setPriority(priority);
+		
+		if (!categories.containsKey(category)) {
+			categories.put(category, true);
+		}
+		
 		task.setCategory(category);
 		task.setCompleted(completed);
 		task.setDateDue(dateDue);
@@ -123,6 +151,14 @@ public class TaskList implements Serializable {
 	}
 	public void setShowCompleted(boolean flag) {
 		this.showCompleted = flag;	
+	}
+
+	public void updateShowCategory(String category, boolean flag) {
+		
+		if (categories.containsKey(category)) {
+			categories.put(category, flag);
+		}
+		
 	}
 	
 //USELESS METHODS
