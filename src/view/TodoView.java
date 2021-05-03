@@ -400,8 +400,6 @@ public class TodoView extends Application implements Observer {
 				setup(null);
 				controller.manualNotify();
 			}
-			// TODO: Maybe in the future, add a pop-up to save the current file
-			// before in the future. Also do that on close.
 		});
 		
 		
