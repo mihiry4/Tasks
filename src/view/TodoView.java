@@ -693,7 +693,7 @@ public class TodoView extends Application implements Observer {
         	dialog.close();
         });
         
-        // adding to chiwldren of Boxes wherever needed
+        // adding to children of Boxes wherever needed
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
         deleteTaskButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
 
@@ -733,7 +733,6 @@ public class TodoView extends Application implements Observer {
 			if (categories.get(t.getCategory())) {
 				GridPane tempGP = makeTaskRow(t);
 				tasksBox.getChildren().add(tempGP);
-				
 			}
 		}
 		
