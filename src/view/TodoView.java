@@ -21,6 +21,7 @@ import controller.TodoDueDateInPastException;
 import controller.TodoEmptyTaskNameException;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -185,7 +186,7 @@ public class TodoView extends Application implements Observer {
 		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
-		scene = new Scene(window, 600, 600);
+		scene = new Scene(window, 650, 600);
 		stage.setScene(scene);
 		stage.setTitle("ToDo Application");
 		
@@ -391,8 +392,14 @@ public class TodoView extends Application implements Observer {
 		
 		// create a new file
 		newFile.setOnAction((event) -> {
-			setup(null);
-			controller.manualNotify();
+			boolean continueNewFile = true;
+			if(!controller.getSavedAfterChanges()) {
+				continueNewFile = saveAlert("creating a new file");
+			}
+				if(continueNewFile) {
+				setup(null);
+				controller.manualNotify();
+			}
 			// TODO: Maybe in the future, add a pop-up to save the current file
 			// before in the future. Also do that on close.
 		});
@@ -628,7 +635,8 @@ public class TodoView extends Application implements Observer {
         	listCell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
         		if (listCell.getItem().isEmpty() && !listCell.isEmpty()) {
         			TextInputDialog newCatTextInput = new TextInputDialog();
-        			newCatTextInput.setContentText("Enter new category");
+        			newCatTextInput.setHeaderText("Provide a name for your new category.");
+        			newCatTextInput.setTitle("New Category");
         			newCatTextInput.showAndWait().ifPresent(newCat -> {
         				int numCats = categorySelector.getItems().size();
         				categorySelector.getItems().add(numCats-1, newCat);
@@ -645,17 +653,6 @@ public class TodoView extends Application implements Observer {
         if (!category.equals("")) {
         	categorySelector.getSelectionModel().select(category);
         }
-        
-        
-        
-        
-        
-        TextField categoryField = new TextField();
-        categoryField.setPromptText("Category");
-        categoryField.setPrefWidth(160);
-        categoryField.setMaxWidth(180);
-        categoryField.setText(category);
-        
         
         // priority
         Text priorityText = new Text("Priority");
@@ -829,8 +826,11 @@ public class TodoView extends Application implements Observer {
 		a.setHeaderText("You have unsaved changes that will be lost by " + string);
 		a.setContentText(" Do you wish to continue?");
 		a.setTitle("Unsaved Changes");
+		ObservableList<ButtonType> buttons = a.getButtonTypes();
+		buttons.clear();
+		buttons.addAll(ButtonType.YES, ButtonType.NO);
 		Optional<ButtonType> result = a.showAndWait();
-		if(result.isPresent() && result.get() == ButtonType.OK) {
+		if(result.isPresent() && result.get() == ButtonType.YES) {
 		     return true;
 		 }
 		return false;
