@@ -731,7 +731,7 @@ public class TodoView extends Application implements Observer {
 			}
 			
 			if (categories.get(t.getCategory())) {
-				GridPane tempGP = addTaskRow(t);
+				GridPane tempGP = makeTaskRow(t);
 				tasksBox.getChildren().add(tempGP);
 				
 			}
