@@ -13,6 +13,12 @@ import controller.TodoEmptyTaskNameException;
 import model.Task;
 import model.TaskList;
 import model.TodoModel;
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * Class that tests all the public methods
+ *
+ */
 
 class TodoTestClass {
 
@@ -392,8 +398,8 @@ class TodoTestClass {
 	 * Test methods for {@link TodoDueDateInPastException}
 	 * Test methods for {@link TodoEmptyTaskNameException}
 	 * 
-	 * @throws TodoDueDateInPastException
-	 * @throws TodoEmptyTaskNameException
+	 * @throws TodoDueDateInPastException throws exception if due date in past 
+	 * @throws TodoEmptyTaskNameException throws exception if name is not entered
 	 */
 	@Test
 	void testException() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -435,8 +441,8 @@ class TodoTestClass {
 	}
 	
 	/**
-	 * Test method for {@link TodoDoController#getSavedAfterChanges()}
-	 * Test method for {@link TodoModel#getSaved()}
+	 * Test method for TodoDoController#getSavedAfterChanges()
+	 * Test method for TodoModel#getSaved()
 	 */
 	@Test
 	void testGetSavedAfterChanges() {
@@ -448,12 +454,12 @@ class TodoTestClass {
 	}
 	
 	/**
-	 * Test method for {@link TodoController#modifyTask()} 
-	 * Test method for {@link TodoController#removeTask(Task)}
-	 * Test method for {@link TodoController#createNewTask(String, String, int, String, boolean, Date, String)}
+	 * Test method for TodoController#modifyTask()
+	 * Test method for TodoController#removeTask(Task)
+	 * Test method for TodoController#createNewTask(String, String, int, String, boolean, Date, String)
 	 * 
-	 * @throws TodoEmptyTaskNameException 
-	 * @throws TodoDueDateInPastException 
+	 * @throws TodoEmptyTaskNameException throws exception if due dae was in past
+	 * @throws TodoDueDateInPastException throws exception if name wasn't specified for a task
 	 */
 	@Test
 	void testModifyTask() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -482,10 +488,10 @@ class TodoTestClass {
 		
 	}	
 	
-	/**
-	 * Test method for {@link TodoModel#getTask(Date)}
-	 * Test method for {@link TodoModel#getTaskListSize()}
-	 * Test method for {@link TodoModel#removeTask(Date)}
+	/*
+	 * Test method for TodoModel#getTask(Date)
+	 * Test method for TodoModel#getTaskListSize()
+	 * Test method for TodoModel#removeTask(Date)
 	 */
 	@Test
 	void testModelGetters() {
