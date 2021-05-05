@@ -14,3 +14,11 @@ Add/Rename/Delete tasks
 (7) Save/Load
 (8) Sort tasks (alphabetically, creation time, importance, due date, etc.)
 (9) Filter Tasks by Category
+
+### Demo Details
+Please refer to the TODO335.ppt for a demo which will walk you through some of the salient features and also provide a small demo of the apps usage
+
+The password to access the ppt is
+```bash
+allhailmisurda
+```
