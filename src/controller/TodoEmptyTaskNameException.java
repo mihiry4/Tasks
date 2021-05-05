@@ -1,3 +1,10 @@
+/**
+ * Class: TodoEmptyTaskNameException 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * Purpose: File for exception
+ *  Thrown when user tries to submit without specifying a task name
+ */
+
 package controller;
 
 /**
@@ -11,7 +18,7 @@ public class TodoEmptyTaskNameException extends Exception{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * @param message
+	 * @param message the message that needs to printed
 	 */
 	public TodoEmptyTaskNameException(String message) {
 		super(message);
