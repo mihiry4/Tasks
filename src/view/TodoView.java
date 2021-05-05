@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * 
+ * File of a class that will hold the View of the ToDo application. 
+ *
+ */
+
 package view;
 
 import java.io.File;
@@ -7,15 +15,21 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
+
 import controller.TodoController;
 import controller.TodoDueDateInPastException;
 import controller.TodoEmptyTaskNameException;
 import javafx.application.Application;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,17 +37,21 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -74,16 +92,22 @@ public class TodoView extends Application implements Observer {
 	TodoController controller;
 	StackPane bottomPane;
 	private MenuBar menuBar;
+	private Menu filter;
 	private Circle addTaskButton, transparentCircle;
 	private CheckMenuItem showCompleted;
-	private MenuItem newFile, saveFile, loadFile;
+	private MenuItem newFile, saveFile, loadFile, showAll, hideAll;
 	private MenuItem name, priority, category, dueDate, dateCreated;
 	private Stage myStage;
 	private VBox tasksBox;
 	private VBox centerWindow;
 	private GridPane columnHeaders;
 	private Scene scene;
+	private List<CheckMenuItem> categoryCheckBoxes;
 	
+	/**
+	 * create a new model by taking a file
+	 * @param file a file to load
+	 */
 	private void setup(File file) {
 		if (file == null) {
 			model = new TodoModel();
@@ -93,8 +117,14 @@ public class TodoView extends Application implements Observer {
 		
 		controller = new TodoController(model);
 		model.addObserver(this); 
+		categoryCheckBoxes = new ArrayList<CheckMenuItem>();
 	}
 	
+	/**
+	 * Start function which sets up the GUI window
+	 * to start toDo.
+	 * @param stage is the stage which is displayed
+	 */
 	public void start(Stage stage) {
 		
 		setup(null);
@@ -106,10 +136,11 @@ public class TodoView extends Application implements Observer {
 		centerWindow = new VBox();
 		columnHeaders   = new GridPane();
 		
-		// Menu for files and sorting 
+		// Menu for files and sorting and filtering
 		Menu fileMenu   = new Menu("File");
-		Menu sortByMenu = new Menu("View");
+		Menu viewMenu = new Menu("View");
 		Menu sortBy     = new Menu("Sort By");
+		filter = new Menu("Filter by Category");
 		
 		// Menu Items for fileMenu: 
 		newFile  = new MenuItem("New File");
@@ -125,11 +156,15 @@ public class TodoView extends Application implements Observer {
 		dateCreated = new MenuItem("Date Created");
 		sortBy.getItems().addAll(name, priority, category, dueDate, dateCreated);
 		
+		// Menu Item for Filter: (menu inside menu)
+		showAll = new MenuItem("Show All");
+		hideAll = new MenuItem("Hide All");
+		
 		showCompleted = new CheckMenuItem("Show Completed Tasks");
-		sortByMenu.getItems().addAll(sortBy, showCompleted);
+		viewMenu.getItems().addAll(sortBy, filter, showCompleted);
 		
 		// Add both Menus to MenuBar
-		menuBar.getMenus().addAll(fileMenu, sortByMenu);
+		menuBar.getMenus().addAll(fileMenu, viewMenu);
 		
 		// Method called to set all event handlers for all
 		// different drop down menus. 
@@ -159,9 +194,19 @@ public class TodoView extends Application implements Observer {
 		window.setAlignment(bottomPane, Pos.CENTER);
 		
 		// Set new scence and display. 
-		scene = new Scene(window, 600, 600);
+		scene = new Scene(window, 650, 600);
 		stage.setScene(scene);
 		stage.setTitle("ToDo Application");
+		
+		stage.setOnCloseRequest(e -> {
+			//System.out.println("Exiting");
+			if(!controller.getSavedAfterChanges()) {
+				boolean continueExit = saveAlert("closing the application");
+				if(!continueExit) {
+					e.consume();
+				}
+			}
+		});
 		stage.show();
 	}
 	
@@ -202,6 +247,10 @@ public class TodoView extends Application implements Observer {
 		columnHeaders.setStyle("-fx-background-color:#C0C0C0");
 	}
 	
+	/**
+	 * adds columns constraints to a grid pane
+	 * @param gridPane a grid pane with added column constraints
+	 */
 	private void addColumnConstraints(GridPane gridPane) {
 		final int[] COLUMN_CONSTRAINTS_PERCENTS = new int[] {16, 20, 16, 16, 16, 16};  
 		
@@ -212,17 +261,19 @@ public class TodoView extends Application implements Observer {
 		}
 	}
 
-	/*
-	 * adds task rows to UI
+	/**
+	 * adds task to the GUI
+	 * @param task a task that is to be displayed as a row in GUI
+	 * @return GridPane the grid pane consisting of a task row
 	 */
-	private GridPane addTaskRow(Task task) {
+	private GridPane makeTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
 		
 		// creating checkbox for completion
         CheckBox completedCB = new CheckBox();
 		if(task.isCompleted())
 			completedCB.setSelected(true);
-		completedCB.setPadding(new Insets(2, 2, 2, 2));
+		completedCB.setPadding(new Insets(2, 2, 2, 10));
 		
 		//Setting action to check boxes
 	    completedCB.selectedProperty().addListener(
@@ -238,7 +289,7 @@ public class TodoView extends Application implements Observer {
 			}
 	      });
 		// getting task name and converting it to task
-		String name = task.getName();
+		String name = " " + task.getName();
 		Text nameText = new Text(name);
 		nameText.setOnMouseClicked(e -> {
 			createPopUp(task, task.getName(), task.getDescription(), task.getPriority(), task.getCategory(), task.isCompleted(),
@@ -247,23 +298,23 @@ public class TodoView extends Application implements Observer {
 		
 		
 		// getting priority and converting to text
-		String priority = String.valueOf(task.getPriority());
+		String priority = " " + String.valueOf(task.getPriority());
 		Text priorityText = new Text(priority);
 		
 		// getting category and converting it to text
-		String category = task.getCategory();
+		String category = " " + task.getCategory();
 		Text categoryText = new Text(category);
 		
 		// getting date and converting it to text
 		String date = String.valueOf(task.getDateDue().getDate());
-		String month =  String.valueOf(task.getDateDue().getMonth());
+		String month =  String.valueOf(task.getDateDue().getMonth()+1);
 		String year =  String.valueOf(task.getDateDue().getYear() + 1900);
-		String finDate = month + "/" + date  + "/" + year;
+		String finDate = " " + month + "/" + date  + "/" + year;
 		Text dateText = new Text(finDate);
 
 		// new hbox for reorder buttons and up/down buttons
 		HBox hb = new HBox();
-		hb.setPadding(new Insets(5, 5, 5, 5));
+		hb.setPadding(new Insets(5, 5, 5, 10));
 		Button up = new Button("up");
 		Button down = new Button("down");
 		up.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
@@ -301,9 +352,10 @@ public class TodoView extends Application implements Observer {
 		
 	}
 	
-	
-	
-	
+	/**
+	 * show any type of alert 
+	 * @param string a string to show in alert
+	 */
 	private void showAlert(String string) {
 		Alert a = new Alert(Alert.AlertType.INFORMATION);
 		a.setTitle("Error!");
@@ -321,40 +373,44 @@ public class TodoView extends Application implements Observer {
 	 */
 	private void setEventHandlers() {
 		
-		
+		// sort list by name
 		name.setOnAction((event) -> {
 			controller.sortByName();
 		});
 		
-		
+		// sort list by priority
 		priority.setOnAction((event) -> {
 			controller.sortByPriority();
 		});
 		
-		
+		// sort list by category
 		category.setOnAction((event) -> {
 			controller.sortByCategory();
 		});
 		
-		
+		// sort list by duedate
 		dueDate.setOnAction((event) -> {
 			controller.sortByDateDue();
 		});
 		
-		
+		// sort list by date created
 		dateCreated.setOnAction((event) -> {
 			controller.sortByDateCreated();
 		});
 		
-		
+		// create a new file
 		newFile.setOnAction((event) -> {
-			setup(null);
-			controller.manualNotify();
-			// TODO: Maybe in the future, add a pop-up to save the current file
-			// before in the future. Also do that on close.
+			boolean continueNewFile = true;
+			if(!controller.getSavedAfterChanges()) {
+				continueNewFile = saveAlert("creating a new file");
+			}
+				if(continueNewFile) {
+				setup(null);
+				controller.manualNotify();
+			}
 		});
 		
-		
+		// action of clicking a save button
 		saveFile.setOnAction((event) -> {
 			FileChooser fileChooser = new FileChooser();
 		    fileChooser.setTitle("Save");
@@ -362,10 +418,11 @@ public class TodoView extends Application implements Observer {
 		    //Adding action on the menu item
 	        //Opening a dialog box
 		    File file = fileChooser.showSaveDialog(myStage);
+
 	        if (file != null) {
-	        	String fileName = file.getName();
+	        	String filePath = file.getPath();
                 try {
-					FileOutputStream fout = new FileOutputStream(fileName);
+					FileOutputStream fout = new FileOutputStream(filePath);
 					ObjectOutputStream oos = new ObjectOutputStream(fout);
 					controller.writeToFile(oos);
 				} catch (IOException e) {
@@ -380,22 +437,51 @@ public class TodoView extends Application implements Observer {
 		});
 		
 		
-		
+		// action of clicking a load button
 		loadFile.setOnAction((event) -> {
-			FileChooser fileChooser = new FileChooser();
-			fileChooser.setTitle("Open Resource File");
-			fileChooser.getExtensionFilters().addAll(
-					new ExtensionFilter("Text Files", "*.dat"));
-			File selectedFile = fileChooser.showOpenDialog(this.myStage);
-			if (selectedFile != null) {
-				setup(selectedFile);
-				controller.manualNotify();
+			boolean continueLoad = true;
+			if(!controller.getSavedAfterChanges()) {
+				continueLoad = saveAlert("opening a different list");
+			}
+			if(continueLoad) {
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.setTitle("Open Resource File");
+				fileChooser.getExtensionFilters().addAll(
+						new ExtensionFilter("Text Files", "*.dat"));
+				File selectedFile = fileChooser.showOpenDialog(this.myStage);
+				if (selectedFile != null) {
+					setup(selectedFile);
+					controller.manualNotify();
+				}
 			}
 		});
 		
-		
+		// action of clicking a show completed button
 		showCompleted.setOnAction((event) -> {
 			controller.updateShowCompleted(showCompleted.isSelected());
+		});
+		
+		showAll.setOnAction((event) -> {
+			for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
+				
+				if (!categoryCheckBox.isSelected()) {
+					categoryCheckBox.setSelected(true);
+					updateShowCategory(categoryCheckBox);
+				}
+			}
+			
+		});
+		
+		// action of clicking a hide all button
+		hideAll.setOnAction((event) -> {
+			for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
+				
+				if (categoryCheckBox.isSelected()) {
+					categoryCheckBox.setSelected(false);
+					updateShowCategory(categoryCheckBox);
+				}
+			}
+			
 		});
 	}
 	
@@ -435,6 +521,11 @@ public class TodoView extends Application implements Observer {
 		});
 	}
 	
+	/**
+	 * gets width of a text
+	 * @param text the text whose width is required
+	 * @return double width of the text
+	 */
 	private double getWidth(Text text) {
 		new Scene(new Group(text));
 		text.applyCss();
@@ -455,15 +546,24 @@ public class TodoView extends Application implements Observer {
 	/**
 	 * Function called when addTask Circle is pressed on
 	 * to get users input to customize an added new task. 
-	 * 
-	 * no return.
+	 * @param task the task needed to be modified
 	 */
 	private void modifyTask(Task task) {
 		createPopUp(task, task.getName(), task.getDescription(), task.getPriority(), 
 				task.getCategory(), task.isCompleted(), task.getDateDue(), task.getLocation());
 	}
 	
-	
+	/**
+	 * createPopUp creates a popUp
+	 * @param task a task object
+	 * @param taskName the name of a task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDue the due date of a task
+	 * @param location the location of a task
+	 */
 	private void createPopUp(Task task, String taskName, String description, int priority, String category, boolean completed,
 			Date dateDue, String location) {
 		boolean isNew = false;
@@ -511,11 +611,56 @@ public class TodoView extends Application implements Observer {
         
         // category
         Text categoryText = new Text("Category");
-        TextField categoryField = new TextField();
-        categoryField.setPromptText("Category");
-        categoryField.setPrefWidth(160);
-        categoryField.setMaxWidth(180);
-        categoryField.setText(category);
+        ComboBox<String> categorySelector = new ComboBox<String>();
+        categorySelector.setPromptText("Select one");
+        categorySelector.setPrefWidth(160);
+        categorySelector.setMaxWidth(180);
+        
+        ArrayList<String> categories = new ArrayList<String>();
+        for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
+        	categories.add(categoryCheckBox.getText());
+        }
+        categorySelector.getItems().addAll(categories);
+        
+        //"add new category..." selection and associated dialog
+        categorySelector.getItems().add("");
+        categorySelector.setCellFactory(val -> {
+        	ListCell<String> listCell = new ListCell<String>() {
+        		@Override
+        		protected void updateItem(String item, boolean isEmpty) {
+        			super.updateItem(item, isEmpty);
+        			if (isEmpty) {
+        				setText(null);
+        			} else {
+        				if (item.isEmpty()) setText("Add category...");
+        				else setText(item);
+        			}
+        		}
+        	};
+        	
+        	listCell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        		if (listCell.getItem().isEmpty() && !listCell.isEmpty()) {
+        			TextInputDialog newCatTextInput = new TextInputDialog();
+        			newCatTextInput.setHeaderText("Provide a name for your new category.");
+        			newCatTextInput.setTitle("New Category");
+        			newCatTextInput.showAndWait().ifPresent(newCat -> {
+        				int numCats = categorySelector.getItems().size();
+        				categorySelector.getItems().add(numCats-1, newCat);
+        				categorySelector.getSelectionModel().select(numCats-1);
+        			});
+        			event.consume();
+        			
+        		}
+        	});
+        	
+        	return listCell;
+        });
+        
+        if (!category.equals("")) {
+        	categorySelector.getSelectionModel().select(category);
+        }
+        
+        // priority
         Text priorityText = new Text("Priority");
         final ComboBox<Integer> priorityComboBox = new ComboBox<Integer>();
         priorityComboBox.getItems().addAll(
@@ -542,6 +687,17 @@ public class TodoView extends Application implements Observer {
             }
         });
         
+        // interprets and updates datePicker value if user types date instead of picking from calendar
+        datePicker.getEditor().focusedProperty().addListener((obj, wasFocused, isFocused)->{
+            if (!isFocused) {
+               try {
+                   datePicker.setValue(datePicker.getConverter().fromString(datePicker.getEditor().getText()));
+               } catch (DateTimeParseException e) {
+                      datePicker.getEditor().setText(datePicker.getConverter().toString(datePicker.getValue()));
+               }
+            }
+      });
+        
         // location
         Text locationHeading = new Text("Location");
         TextField locationField = new TextField();
@@ -557,13 +713,13 @@ public class TodoView extends Application implements Observer {
         buttonsHbox.getChildren().addAll(submitDetailsButton,deleteTaskButton);
         buttonsHbox.setSpacing(5);
         
-        // printing out all the fields on submit button
-        // TODO: tell controller to make new task out of given information
+        // makes new task out of given information
         submitDetailsButton.setOnAction((event)->{
         	String nameOutput = nameField.getText();
         	String descriptionOutput = DescriptionField.getText();
         	boolean isCompletedOutput = cb.isSelected(); // return a boolean
-        	String categoryOutput = categoryField.getText();
+        	String categoryOutput = categorySelector.getSelectionModel().getSelectedItem();
+        	if (categoryOutput == null) categoryOutput = "Uncategorized";
         	int priorityOutput = priorityComboBox.getValue();
         	LocalDate localDateOutput = datePicker.getValue(); // returns in format 2021-04-28
         	String locationOutput = locationField.getText();
@@ -603,7 +759,7 @@ public class TodoView extends Application implements Observer {
         submitDetailsButton.setStyle("-fx-background-color: #008300; -fx-text-fill: white");
         deleteTaskButton.setStyle("-fx-background-color: #ff0000; -fx-text-fill: white");
 
-        secondaryDetailsVbox.getChildren().addAll(categoryText, categoryField, 
+        secondaryDetailsVbox.getChildren().addAll(categoryText, categorySelector, 
         		priorityText, priorityComboBox, dueDateText, 
         		datePicker,locationHeading, locationField, buttonsHbox);
         stackPane.getChildren().addAll(backGColor,secondaryDetailsVbox);
@@ -613,20 +769,83 @@ public class TodoView extends Application implements Observer {
         dialog.setScene(dialogScene);
         dialog.show();
 	}
+	
+	/**
+	 * updates show category required by user or not
+	 * @param tmpCheckMenuItem the checkmenuitem that has show category option
+	 */
+	private void updateShowCategory(CheckMenuItem tmpCheckMenuItem) {
+		controller.updateShowCategory(tmpCheckMenuItem.getText(), tmpCheckMenuItem.isSelected());
+	}
 
+	/**
+	 * Updates the view based on the list
+	 * in the model.
+	 * @param o Observable toDoModel
+	 * @param arg This is the list
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		
-		//System.out.println("updating");
 		tasksBox.getChildren().clear();
 		TaskList tList = (TaskList) arg;
 		List<Task> taskList = tList.getTaskList();
+		Map<String, Boolean> categories = tList.getCategories();
 		for(Task t: taskList) {
-			if(t.isCompleted()&& !tList.getShowCompleted())
+			if(t.isCompleted() && !tList.getShowCompleted()) {
 				continue;
+			}
 			
-			GridPane tempGP = addTaskRow(t);
-			tasksBox.getChildren().add(tempGP);
+			if (categories.get(t.getCategory())) {
+				GridPane tempGP = makeTaskRow(t);
+				tasksBox.getChildren().add(tempGP);
+			}
 		}
+		
+		//Setting up category filter
+		categoryCheckBoxes = new ArrayList<CheckMenuItem>();
+		
+		filter.getItems().clear();
+		
+		for (Map.Entry<String, Boolean> entry : categories.entrySet()) {
+			String category = entry.getKey();
+			boolean showing = entry.getValue();
+			
+			CheckMenuItem tmpCheckMenuItem = new CheckMenuItem(category);
+			tmpCheckMenuItem.setSelected(showing);
+			tmpCheckMenuItem.setOnAction((event) -> {
+				updateShowCategory(tmpCheckMenuItem);
+			});
+			categoryCheckBoxes.add(tmpCheckMenuItem);
+			filter.getItems().add(tmpCheckMenuItem);
+			
+			
+			
+		}
+		filter.getItems().add(showAll);
+		filter.getItems().add(hideAll);
+		
+		
+	}
+	
+	/**
+	 * the method that shows alert on closing of a window without saving
+	 * @param string that needs to be shown
+	 * @return if user picked yes return true else false
+	 */
+	public boolean saveAlert(String string) {
+		
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+		a.setHeaderText("You have unsaved changes that will be lost by " + string);
+		a.setContentText(" Do you wish to continue?");
+		a.setTitle("Unsaved Changes");
+		ObservableList<ButtonType> buttons = a.getButtonTypes();
+		buttons.clear();
+		buttons.addAll(ButtonType.YES, ButtonType.NO);
+		Optional<ButtonType> result = a.showAndWait();
+		if(result.isPresent() && result.get() == ButtonType.YES) {
+		     return true;
+		 }
+		return false;
 	}
 }

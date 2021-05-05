@@ -1,3 +1,9 @@
+/**
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ *
+ * Class that will hold the Model of ToDo Application. 
+ */
+
 package model;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 /**
@@ -14,25 +21,44 @@ import java.util.Observable;
  *
  * Class that will hold the Model of ToDo Application. 
  */
-
 @SuppressWarnings("deprecation")
 public class TodoModel extends Observable {
 	
 	private TaskList taskList;
+	private boolean saved;
 	
+	/**
+	 * constructor method for model
+	 * 
+	 */
 	public TodoModel() {
 		
 		this.taskList = new TaskList();
+		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with taskList
+	 * @param taskList that is used to make a model
+	 */
 	public TodoModel(TaskList taskList) {
 		this.taskList = taskList;
+		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with list of task
+	 * @param taskList list of tasks that is used to make a model
+	 */
 	public TodoModel(List<Task> taskList) {
 		this.taskList = new TaskList(taskList);
+		saved = true;
 	}
 	
+	/**
+	 * constructor method for model that is associated with file
+	 * @param file that is used to make a model
+	 */
 	public TodoModel(File file) {
 		try {
 			FileInputStream fin = new FileInputStream(file);
@@ -40,14 +66,14 @@ public class TodoModel extends Observable {
 			this.taskList = (TaskList) ois.readObject();
 			ois.close();
 		} catch (IOException | ClassNotFoundException e) {
-			this.taskList = new TaskList();
+			this.taskList = new TaskList();			
 		} 
+		saved = true;
 	}
 	
 	/**
 	 * Method to get a list of all the tasks that a user has. 
-	 * 
-	 * @return List<Task> that contains all of the current tasks a user has. 
+	 * @return a list that contains all of the current tasks a user has. 
 	 */
 	public List<Task> getTaskList(){
 		
@@ -71,6 +97,7 @@ public class TodoModel extends Observable {
 	 */
 	public void addTask(Task task) {
 		this.taskList.addTask(task);
+		saved = false;
 		this.manualNotify();
 	}
 	
@@ -83,6 +110,7 @@ public class TodoModel extends Observable {
 	public boolean removeTask(Task task) {
 		boolean retTask =  taskList.removeTask(task);
 		this.manualNotify();
+		saved = false;
 		return retTask;
 		
 	}
@@ -97,6 +125,7 @@ public class TodoModel extends Observable {
 	public Task removeTask(Date dateCreated) {
 		Task retTask = this.taskList.removeTask(dateCreated);
 		this.manualNotify();
+		saved = false;
 		return retTask;
 	}
 	
@@ -126,6 +155,8 @@ public class TodoModel extends Observable {
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) {
 		this.taskList.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
+		
+		saved = false;
 		this.manualNotify();
 	}
 	
@@ -139,13 +170,38 @@ public class TodoModel extends Observable {
 	
 	/**
 	 * Function to set flag for if we want to show completed tasks
-	 * @param flag
+	 * @param flag the flag that shows showCompleted status
 	 */
 	public void updateShowCompleted(boolean flag) {
 		this.taskList.setShowCompleted(flag);	
 	}
 
+	/**
+	 * saves list by writing to object output stream
+	 * @param oos thats been written into
+	 * @throws IOException throws exception if there was problem in I/O operation
+	 */
 	public void saveList(ObjectOutputStream oos) throws IOException {
 		oos.writeObject(this.taskList);
+		saved = true;
+	}
+	
+	/**
+	 * gets boolean of saved status
+	 * @return boolean of save status
+	 */
+	public boolean getSaved() {
+		return saved;
+	}
+
+	/**
+	 * updates show category in tasklist
+	 * @param category the category to be shown
+	 * @param flag the flag for show status
+	 */
+	public void updateShowCategory(String category, boolean flag) {
+		
+		taskList.updateShowCategory(category, flag);
+		
 	}
 }
