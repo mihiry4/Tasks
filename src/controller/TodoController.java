@@ -1,3 +1,10 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * Purpose: Controller for To-do app
+ * 
+ */
+
 package controller;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -13,7 +20,8 @@ import model.TodoModel;
 /**
  * 
  * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
- *
+ * Purpose: Controller class for To-do app
+ * 
  */
 public class TodoController {
 	
@@ -32,7 +40,7 @@ public class TodoController {
 	
 	/**
 	 * Constructor that uses a model to create an instance
-	 * @param customModel model associated with the constructor
+	 * @param arr list of tasks
 	 */
 	public TodoController(List<Task> arr) {
 		model = new TodoModel(arr);
@@ -41,7 +49,7 @@ public class TodoController {
 	/**
 	 * Used to write the model/board to an object output stream
 	 * @param oos Object output stream to which we write
-	 * @throws IOException
+	 * @throws IOException throws exception if there was a problem in I/O
 	 */
 	public void writeToFile(ObjectOutputStream oos) throws IOException {
 		model.saveList(oos);
@@ -149,6 +157,11 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * updates show category
+	 * @param category the category that is to be shown
+	 * @param flag the flag value that represents show status
+	 */
 	public void updateShowCategory(String category, boolean flag) {
 		
 		model.updateShowCategory(category, flag);
@@ -166,8 +179,8 @@ public class TodoController {
 	 * @param dateDue the due date of a task
 	 * @param location the location of a task
 	 * @return Task newly created task
-	 * @throws TodoDueDateInPastException
-	 * @throws TodoEmptyTaskNameException
+	 * @throws TodoDueDateInPastException throws exception if due date was in past
+	 * @throws TodoEmptyTaskNameException throws exception if name wasn't entered for a task
 	 */
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
 			, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -196,10 +209,10 @@ public class TodoController {
 	 * @param priority the priority of a task
 	 * @param category the category of a task
 	 * @param completed the completion of a task
-	 * @param dateDuen the due date of a task
+	 * @param dateDue the due date of a task
 	 * @param location the location of a task
-	 * @throws TodoDueDateInPastException
-	 * @throws TodoEmptyTaskNameException
+	 * @throws TodoDueDateInPastException throws exception if due date is in past
+	 * @throws TodoEmptyTaskNameException throws exception if name wasn't entered for task
 	 */
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -220,7 +233,7 @@ public class TodoController {
 	
 	/**
 	 * removes an already existing task
-	 * @param task
+	 * @param task the task that needs to be removed
 	 * @return if task was deleted successfully or not
 	 */
 	public boolean removeTask(Task task) {
@@ -236,6 +249,10 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * gets a boolean that shows if file is saved or not
+	 * @return status for save
+	 */
 	public boolean getSavedAfterChanges() {
 		return model.getSaved();
 	}

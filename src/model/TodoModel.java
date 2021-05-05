@@ -1,3 +1,9 @@
+/**
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ *
+ * Class that will hold the Model of ToDo Application. 
+ */
+
 package model;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,7 +21,6 @@ import java.util.Observable;
  *
  * Class that will hold the Model of ToDo Application. 
  */
-
 @SuppressWarnings("deprecation")
 public class TodoModel extends Observable {
 	
@@ -43,7 +48,7 @@ public class TodoModel extends Observable {
 	
 	/**
 	 * constructor method for model that is associated with list of task
-	 * @param list of tasks that is used to make a model
+	 * @param taskList list of tasks that is used to make a model
 	 */
 	public TodoModel(List<Task> taskList) {
 		this.taskList = new TaskList(taskList);
@@ -68,7 +73,7 @@ public class TodoModel extends Observable {
 	
 	/**
 	 * Method to get a list of all the tasks that a user has. 
-	 * @return List<Task> that contains all of the current tasks a user has. 
+	 * @return a list that contains all of the current tasks a user has. 
 	 */
 	public List<Task> getTaskList(){
 		
@@ -165,7 +170,7 @@ public class TodoModel extends Observable {
 	
 	/**
 	 * Function to set flag for if we want to show completed tasks
-	 * @param flag
+	 * @param flag the flag that shows showCompleted status
 	 */
 	public void updateShowCompleted(boolean flag) {
 		this.taskList.setShowCompleted(flag);	
@@ -174,17 +179,26 @@ public class TodoModel extends Observable {
 	/**
 	 * saves list by writing to object output stream
 	 * @param oos thats been written into
-	 * @throws IOException
+	 * @throws IOException throws exception if there was problem in I/O operation
 	 */
 	public void saveList(ObjectOutputStream oos) throws IOException {
 		oos.writeObject(this.taskList);
 		saved = true;
 	}
 	
+	/**
+	 * gets boolean of saved status
+	 * @return boolean of save status
+	 */
 	public boolean getSaved() {
 		return saved;
 	}
 
+	/**
+	 * updates show category in tasklist
+	 * @param category the category to be shown
+	 * @param flag the flag for show status
+	 */
 	public void updateShowCategory(String category, boolean flag) {
 		
 		taskList.updateShowCategory(category, flag);

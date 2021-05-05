@@ -1,3 +1,12 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * 
+ * File for class that represents a single task for a user to add, edit, complete. 
+ *
+ */
+
+
 package model;
 import java.io.Serializable;
 import java.util.Date;
@@ -51,7 +60,7 @@ public class Task implements Serializable {
 	 * @param priority the priority of a task
 	 * @param category the category of a task
 	 * @param dateDue the date due of a task
-	 * @param the location of a task
+	 * @param location the location of a task
 	 */
 	public Task(String taskName, String description, int priority, String category,
 				Date dateDue, String location) {

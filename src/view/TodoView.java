@@ -1,3 +1,11 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * 
+ * File of a class that will hold the View of the ToDo application. 
+ *
+ */
+
 package view;
 
 import java.io.File;
@@ -241,7 +249,7 @@ public class TodoView extends Application implements Observer {
 	
 	/**
 	 * adds columns constraints to a grid pane
-	 * @param gridPane
+	 * @param gridPane a grid pane with added column constraints
 	 */
 	private void addColumnConstraints(GridPane gridPane) {
 		final int[] COLUMN_CONSTRAINTS_PERCENTS = new int[] {16, 20, 16, 16, 16, 16};  
@@ -256,7 +264,7 @@ public class TodoView extends Application implements Observer {
 	/**
 	 * adds task to the GUI
 	 * @param task a task that is to be displayed as a row in GUI
-	 * @return GridPane
+	 * @return GridPane the grid pane consisting of a task row
 	 */
 	private GridPane makeTaskRow(Task task) {
 		GridPane taskRow = new GridPane();
@@ -402,7 +410,7 @@ public class TodoView extends Application implements Observer {
 			}
 		});
 		
-		
+		// action of clicking a save button
 		saveFile.setOnAction((event) -> {
 			FileChooser fileChooser = new FileChooser();
 		    fileChooser.setTitle("Save");
@@ -429,7 +437,7 @@ public class TodoView extends Application implements Observer {
 		});
 		
 		
-		
+		// action of clicking a load button
 		loadFile.setOnAction((event) -> {
 			boolean continueLoad = true;
 			if(!controller.getSavedAfterChanges()) {
@@ -448,7 +456,7 @@ public class TodoView extends Application implements Observer {
 			}
 		});
 		
-		
+		// action of clicking a show completed button
 		showCompleted.setOnAction((event) -> {
 			controller.updateShowCompleted(showCompleted.isSelected());
 		});
@@ -464,6 +472,7 @@ public class TodoView extends Application implements Observer {
 			
 		});
 		
+		// action of clicking a hide all button
 		hideAll.setOnAction((event) -> {
 			for (CheckMenuItem categoryCheckBox : categoryCheckBoxes) {
 				
@@ -514,7 +523,7 @@ public class TodoView extends Application implements Observer {
 	
 	/**
 	 * gets width of a text
-	 * @param text
+	 * @param text the text whose width is required
 	 * @return double width of the text
 	 */
 	private double getWidth(Text text) {
@@ -537,8 +546,7 @@ public class TodoView extends Application implements Observer {
 	/**
 	 * Function called when addTask Circle is pressed on
 	 * to get users input to customize an added new task. 
-	 * 
-	 * no return.
+	 * @param task the task needed to be modified
 	 */
 	private void modifyTask(Task task) {
 		createPopUp(task, task.getName(), task.getDescription(), task.getPriority(), 
@@ -762,6 +770,10 @@ public class TodoView extends Application implements Observer {
         dialog.show();
 	}
 	
+	/**
+	 * updates show category required by user or not
+	 * @param tmpCheckMenuItem the checkmenuitem that has show category option
+	 */
 	private void updateShowCategory(CheckMenuItem tmpCheckMenuItem) {
 		controller.updateShowCategory(tmpCheckMenuItem.getText(), tmpCheckMenuItem.isSelected());
 	}
@@ -816,7 +828,11 @@ public class TodoView extends Application implements Observer {
 		
 	}
 	
-	
+	/**
+	 * the method that shows alert on closing of a window without saving
+	 * @param string that needs to be shown
+	 * @return if user picked yes return true else false
+	 */
 	public boolean saveAlert(String string) {
 		
         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
