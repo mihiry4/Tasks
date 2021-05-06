@@ -1,9 +1,27 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * 
+ * File for a class that represents a tasklist with multiple tasks
+ *  that a user to add, edit, complete. 
+ *
+ */
+
 package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
+import java.util.TreeMap;
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * 
+ * Class that represents a tasklist with multiple tasks
+ *  that a user to add, edit, complete. 
+ *
+ */
 public class TaskList implements Serializable {
 	
 	/**
@@ -11,6 +29,7 @@ public class TaskList implements Serializable {
 	 */
 	private static final long serialVersionUID = -8513246459933416900L;
 	private List<Task> taskList;
+	private Map<String, Boolean> categories;
 	private boolean showCompleted;
 	
 	/**
@@ -19,11 +38,24 @@ public class TaskList implements Serializable {
 	public TaskList() {
 		
 		taskList = new ArrayList<Task>();
+		categories = new TreeMap<String, Boolean>();
 	}
 	
+	/**
+	 * Constructor for the class. Creates a task list with given list of tasks.
+	 * @param list a list of tasks
+	 */
 	public TaskList(List<Task> list) {
 		
 		taskList = list;
+		
+		categories = new TreeMap<String, Boolean>();
+		for (Task task : list) {
+			String taskCategory = task.getCategory();
+			if (!categories.containsKey(taskCategory)) {
+				categories.put(taskCategory, true);
+			}
+		}
 	}
 	
 	/**
@@ -35,12 +67,27 @@ public class TaskList implements Serializable {
 		return taskList;
 	}
 	
+	/**
+	 * get all categories 
+	 * @return map of categories
+	 */
+	public Map<String, Boolean> getCategories() {
+		
+		return categories;
+	}
+	
 	
 	/**
 	 * Adds the given task to the taskList.
 	 * @param task the Task object to be added to the taskList.
 	 */
 	public void addTask(Task task) {
+		
+		String taskCategory = task.getCategory();
+		
+		if (!categories.containsKey(taskCategory)) {
+			categories.put(taskCategory, true);
+		}
 
 		taskList.add(task);
 	}
@@ -112,66 +159,44 @@ public class TaskList implements Serializable {
 		task.setName(taskName);
 		task.setDescription(description);
 		task.setPriority(priority);
+		
+		if (!categories.containsKey(category)) {
+			categories.put(category, true);
+		}
+		
 		task.setCategory(category);
 		task.setCompleted(completed);
 		task.setDateDue(dateDue);
 		task.setLocation(location);
 	}
 
+	/**
+	 * returns if showCompleted is true or false
+	 * @return if showCompleted variable is true or false
+	 */
 	public boolean getShowCompleted() {
 		return this.showCompleted;	
 	}
+	
+	/**
+	 * sets showCompleted in the GUI
+	 * @param flag the flag that represents show completed
+	 */
 	public void setShowCompleted(boolean flag) {
 		this.showCompleted = flag;	
 	}
-	
-//USELESS METHODS
-//	
-//	/**
-//	 * Gets the task at given index - useful for iterating over TaskList.
-//	 * @param index the index at which to grab the task.
-//	 * @return the Task at the given index.
-//	 * @throws IndexOutOfBoundsException if index not valid for the number of tasks.
-//	 */
-//	public Task getTask(int index) {
-//		
-//		if (index < taskList.size() && index >= 0) {
-//			return taskList.get(index);
-//		}
-//		throw new IndexOutOfBoundsException();
-//		
-//	}
-//	
-//	
-//	/**
-//	 * Returns the number of tasks in the task list.
-//	 * @return the number of tasks in the tas list.
-//	 */
-//	public int size() {
-//		return taskList.size();
-//	}
-//	
-//	
-//	/**
-//	 * Modifies a task given the dateCreated of the task and all of its new values.
-//	 * Modifies a task given the task to be modified and all of its new values; values 
-//	 * that should be kept the same should be passed in as the old value.
-//	 * @param dateCreated the dateCreated of the task to be modified.
-//	 * @param taskName the new name of the task.
-//	 * @param description the new description of the task.
-//	 * @param priority the new priority of the task.
-//	 * @param category the new category of the task.
-//	 * @param completed the new completedness of the task.
-//	 * @param dateDue the new due date of the task.
-//	 * @param location the new location of the task.
-//	 */
-//	public void modifyTask(Date dateCreated, String taskName, String description, int priority, String category,
-//			boolean completed, Date dateDue, String location) {
-//		
-//		Task task = getTask(dateCreated);
-//		modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
-//	}
-	
 
+	/**
+	 * updates showcategory
+	 * @param category the category that needs to be shown
+	 * @param flag the show status of true or false
+	 */
+	public void updateShowCategory(String category, boolean flag) {
+		
+		if (categories.containsKey(category)) {
+			categories.put(category, flag);
+		}
+		
+	}
 
 }

@@ -1,3 +1,10 @@
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * Purpose: Controller for To-do app
+ * 
+ */
+
 package controller;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -13,28 +20,44 @@ import model.TodoModel;
 /**
  * 
  * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
- *
+ * Purpose: Controller class for To-do app
+ * 
  */
 public class TodoController {
 	
-
+	
 	private TodoModel model;
 	
 	
-	
+	/**
+	 * Constructor that uses a model to create an instance
+	 * @param customModel model associated with the constructor
+	 */
 	public TodoController(TodoModel customModel) {
 		model = customModel;
 
 	}
 	
+	/**
+	 * Constructor that uses a model to create an instance
+	 * @param arr list of tasks
+	 */
 	public TodoController(List<Task> arr) {
 		model = new TodoModel(arr);
 	}
 	
+	/**
+	 * Used to write the model/board to an object output stream
+	 * @param oos Object output stream to which we write
+	 * @throws IOException throws exception if there was a problem in I/O
+	 */
 	public void writeToFile(ObjectOutputStream oos) throws IOException {
 		model.saveList(oos);
 	}
 	
+	/**
+	 * Used to sort taskList by name
+	 */
 	public void sortByName() {
 			
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -48,6 +71,9 @@ public class TodoController {
 		return;
 	}
 	
+	/**
+	 * Used to sort taskList by priority
+	 */
 	public void sortByPriority() {
 			
 		model.getTaskList().sort(Comparator.comparingInt(Task::getPriority).thenComparing(Task::getPriority));
@@ -57,6 +83,9 @@ public class TodoController {
 		return;
 	}
 	
+	/**
+	 * Used to sort taskList by category
+	 */
 	public void sortByCategory() {
 		
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -70,7 +99,9 @@ public class TodoController {
 		return;
 	}
 	
-	
+	/**
+	 * Used to sort taskList by due date
+	 */
 	public void sortByDateDue() {	
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
 			  public int compare(Task t1, Task t2) {
@@ -81,6 +112,9 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * Used to sort taskList by date created
+	 */
 	public void sortByDateCreated() {
 		
 		Collections.sort(model.getTaskList(), new Comparator<Task>() {
@@ -113,13 +147,41 @@ public class TodoController {
 		model.manualNotify();
 	}
 	
+	/**
+	 * Updates show completed for task completion
+	 * @param bool status of task completion
+	 */
 	public void updateShowCompleted(boolean bool) {
 		
 		model.updateShowCompleted(bool);
 		model.manualNotify();
 	}
 	
+	/**
+	 * updates show category
+	 * @param category the category that is to be shown
+	 * @param flag the flag value that represents show status
+	 */
+	public void updateShowCategory(String category, boolean flag) {
+		
+		model.updateShowCategory(category, flag);
+		model.manualNotify();
+	}
 	
+	
+	/**
+	 * creates a new task 
+	 * @param name the name of a task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDue the due date of a task
+	 * @param location the location of a task
+	 * @return Task newly created task
+	 * @throws TodoDueDateInPastException throws exception if due date was in past
+	 * @throws TodoEmptyTaskNameException throws exception if name wasn't entered for a task
+	 */
 	public Task createNewTask(String name, String description, int priority, String category, boolean completed
 			, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
@@ -129,11 +191,29 @@ public class TodoController {
 		if(name.equals("")) {
 			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
+		
+		if (category.equals("")) {
+			category = "Uncategorized";
+		}
+		
 		Task newTask = new Task(name, description, priority, category, completed, dateDue, new Date(), location);
 		model.addTask(newTask);
 		return newTask;
 	}
 	
+	/**
+	 * modifies an already existing task
+	 * @param task the task needed to be modified
+	 * @param taskName the name of the task
+	 * @param description the description of a task
+	 * @param priority the priority of a task
+	 * @param category the category of a task
+	 * @param completed the completion of a task
+	 * @param dateDue the due date of a task
+	 * @param location the location of a task
+	 * @throws TodoDueDateInPastException throws exception if due date is in past
+	 * @throws TodoEmptyTaskNameException throws exception if name wasn't entered for task
+	 */
 	public void modifyTask(Task task, String taskName, String description, int priority, String category,
 			boolean completed, Date dateDue, String location) throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		Date currDate = new Date();
@@ -143,18 +223,37 @@ public class TodoController {
 		if(taskName.equals("")) {
 			throw new TodoEmptyTaskNameException("Task must have a name");
 		}
+		
+		if (category.equals("")) {
+			category = "Uncategorized";
+		}
+		
 		model.modifyTask(task, taskName, description, priority, category, completed, dateDue, location);
 	}
 	
-	
+	/**
+	 * removes an already existing task
+	 * @param task the task that needs to be removed
+	 * @return if task was deleted successfully or not
+	 */
 	public boolean removeTask(Task task) {
 		
 		return model.removeTask(task);
 	}
 	
+	/*
+	 * calls manualNotify in the model to notify
+	 */
 	public void manualNotify() {
 		
 		model.manualNotify();
 	}
-		
+	
+	/**
+	 * gets a boolean that shows if file is saved or not
+	 * @return status for save
+	 */
+	public boolean getSavedAfterChanges() {
+		return model.getSaved();
+	}
 }

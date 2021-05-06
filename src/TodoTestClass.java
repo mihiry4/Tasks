@@ -18,6 +18,12 @@ import controller.TodoEmptyTaskNameException;
 import model.Task;
 import model.TaskList;
 import model.TodoModel;
+/**
+ * 
+ * @author Kaushal Bhat, Mihir Yadav, Shreyas Khandekar, Zachary Florez
+ * Class that tests all the public methods
+ *
+ */
 
 class TodoTestClass {
 
@@ -349,7 +355,7 @@ class TodoTestClass {
 		assertEquals(testTask1.getDateDue(), d5);
 		assertEquals(testTask1.getLocation(), "new location");
 	}
-	
+
 	@Test
 	void testManualReorder() {
 		
@@ -397,8 +403,8 @@ class TodoTestClass {
 	 * Test methods for {@link TodoDueDateInPastException}
 	 * Test methods for {@link TodoEmptyTaskNameException}
 	 * 
-	 * @throws TodoDueDateInPastException
-	 * @throws TodoEmptyTaskNameException
+	 * @throws TodoDueDateInPastException throws exception if due date in past 
+	 * @throws TodoEmptyTaskNameException throws exception if name is not entered
 	 */
 	@Test
 	void testException() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
@@ -409,11 +415,19 @@ class TodoTestClass {
 		TodoDueDateInPastException past = new TodoDueDateInPastException("");
 		TodoEmptyTaskNameException noName = new TodoEmptyTaskNameException("Task must have a name");
 		
+		Task task = controller.createNewTask("Task", "New Task", 0, "", false, new Date(), "");
+		
 		// TodoEmptyTaskNameException 
 		assertThrows(TodoEmptyTaskNameException.class, 
 				() -> {
 					controller.createNewTask("", "", 0, "", false, new Date(), "");
 				});
+		
+		assertThrows(TodoEmptyTaskNameException.class, 
+				() -> {
+					controller.modifyTask(null, "", null, 0, null, false, new Date(), null);
+				});
+		
 		assertEquals(noName.toString(), "Task must have a name.");
 		
 		
@@ -422,13 +436,64 @@ class TodoTestClass {
 				() -> {
 					controller.createNewTask("Task in the Past", "", 0, "", false, date, "");
 				});
+		
+		assertThrows(TodoDueDateInPastException.class, 
+				() -> {
+					controller.modifyTask(task, "", null, 0, null, false, date, null);
+				});
+		
 		assertEquals(past.toString(), "Due Date cannot be in the past: .");
 	}
 	
+	/**
+	 * Test method for TodoDoController#getSavedAfterChanges()
+	 * Test method for TodoModel#getSaved()
+	 */
+	@Test
+	void testGetSavedAfterChanges() {
+		TodoModel model = new TodoModel();
+		TodoController controller = new TodoController(model);
+		
+		controller.getSavedAfterChanges();
+		assertEquals(controller.getSavedAfterChanges(), model.getSaved());
+	}
 	
-<<<<<<< Updated upstream
 
-=======
+	/**
+	 * Test method for TodoController#modifyTask()
+	 * Test method for TodoController#removeTask(Task)
+	 * Test method for TodoController#createNewTask(String, String, int, String, boolean, Date, String)
+	 * 
+	 * @throws TodoEmptyTaskNameException throws exception if due dae was in past
+	 * @throws TodoDueDateInPastException throws exception if name wasn't specified for a task
+	 */
+	@Test
+	void testModifyTask() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
+		TodoModel model = new TodoModel();
+		TodoController controller = new TodoController(model);
+		
+		// Add a new Task 
+		Task task = controller.createNewTask("Task", "New Task", 0, "", false, new Date(), "");
+		
+		// Modify that same task by changing the priority
+		controller.modifyTask(task, "Task", "New Task", 3, "", false, new Date(), "");
+		
+		// Check priority was changed the right way. 
+		assertEquals(task.getPriority(), 3);
+		
+		// Remove task we just created
+		controller.removeTask(task);
+		controller.manualNotify();
+		
+		// Show completed, and then show categorized. 
+		controller.updateShowCompleted(true);
+		controller.updateShowCategory("Uncategorized", true);
+		
+		// Check to make sure task was removed correctly. 
+		assertEquals(model.getTaskList().size(), 0);
+		
+	}	
+	
 	/*
 	 * Test method for TodoModel#getTask(Date)
 	 * Test method for TodoModel#getTaskListSize()
@@ -471,5 +536,4 @@ class TodoTestClass {
 		
 		
 	}
->>>>>>> Stashed changes
 }
