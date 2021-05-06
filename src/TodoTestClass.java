@@ -1,6 +1,11 @@
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -405,7 +410,7 @@ class TodoTestClass {
 	void testException() throws TodoDueDateInPastException, TodoEmptyTaskNameException {
 		TodoModel model = new TodoModel(); 
 		TodoController controller = new TodoController(model);
-		Date date = new Date(118,5,4,10,40);
+		Date date = new Date();
 		
 		TodoDueDateInPastException past = new TodoDueDateInPastException("");
 		TodoEmptyTaskNameException noName = new TodoEmptyTaskNameException("Task must have a name");
@@ -453,6 +458,7 @@ class TodoTestClass {
 		assertEquals(controller.getSavedAfterChanges(), model.getSaved());
 	}
 	
+
 	/**
 	 * Test method for TodoController#modifyTask()
 	 * Test method for TodoController#removeTask(Task)
@@ -510,5 +516,24 @@ class TodoTestClass {
 		
 		// Check for empty task List size
 		assertEquals(model.getTaskListSize(), 0);
+	}
+	
+	@Test
+	void todoModelSaveTest() {
+		File file = new File("example.dat");
+		TodoModel model = new TodoModel(file);
+		TaskList tl = new TaskList(model.getTaskList());
+		model = new TodoModel(tl);
+		FileOutputStream fout;
+		try {
+			fout = new FileOutputStream("test.dat");
+			ObjectOutputStream oos = new ObjectOutputStream(fout);
+			model.saveList(oos);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
